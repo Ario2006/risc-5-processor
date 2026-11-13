@@ -1,0 +1,16 @@
+benchmark,config,instret,cycles,cpi,ipc,stall_cycles,load_use_stalls,taken_branch_flushes
+bubble_sort,single,591,591,1.0,1.0,0,0,0
+bubble_sort,pipe_nofwd,591,1224,2.071,0.483,433,66,98
+bubble_sort,pipe_fwd,591,857,1.45,0.69,66,66,98
+dep_chain,single,163,163,1.0,1.0,0,0,0
+dep_chain,pipe_nofwd,163,446,2.736,0.365,241,0,19
+dep_chain,pipe_fwd,163,205,1.258,0.795,0,0,19
+fibonacci,single,215,215,1.0,1.0,0,0,0
+fibonacci,pipe_nofwd,215,367,1.707,0.586,90,0,29
+fibonacci,pipe_fwd,215,277,1.288,0.776,0,0,29
+indep_ops,single,162,162,1.0,1.0,0,0,0
+indep_ops,pipe_nofwd,162,244,1.506,0.664,40,0,19
+indep_ops,pipe_fwd,162,204,1.259,0.794,0,0,19
+sum_array,single,86,86,1.0,1.0,0,0,0
+sum_array,pipe_nofwd,86,186,2.163,0.462,66,16,15
+sum_array,pipe_fwd,86,136,1.581,0.632,16,16,15

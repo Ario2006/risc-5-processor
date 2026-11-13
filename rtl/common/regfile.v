@@ -22,10 +22,19 @@ module regfile #(
     always @(posedge clk)
         if (we && waddr != 5'd0) regs[waddr] <= wdata;
 
-    // Write-through models the textbook "write in the first half, read in the second half".
-    wire bypass1 = WRITE_THROUGH && we && waddr != 5'd0 && waddr == raddr1;
-    wire bypass2 = WRITE_THROUGH && we && waddr != 5'd0 && waddr == raddr2;
+    wire [31:0] stored1 = (raddr1 == 5'd0) ? 32'b0 : regs[raddr1];
+    wire [31:0] stored2 = (raddr2 == 5'd0) ? 32'b0 : regs[raddr2];
 
-    assign rdata1 = (raddr1 == 5'd0) ? 32'b0 : bypass1 ? wdata : regs[raddr1];
-    assign rdata2 = (raddr2 == 5'd0) ? 32'b0 : bypass2 ? wdata : regs[raddr2];
+    // Write-through models the textbook "write in the first half, read in the second half".
+    // It only exists when asked for: in the single-cycle CPU wdata depends on rdata, so the
+    // bypass mux would form a combinational loop even though it is never selected.
+    generate
+        if (WRITE_THROUGH) begin : bypass
+            assign rdata1 = (we && waddr != 5'd0 && waddr == raddr1) ? wdata : stored1;
+            assign rdata2 = (we && waddr != 5'd0 && waddr == raddr2) ? wdata : stored2;
+        end else begin : no_bypass
+            assign rdata1 = stored1;
+            assign rdata2 = stored2;
+        end
+    endgenerate
 endmodule

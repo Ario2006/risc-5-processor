@@ -1,5 +1,5 @@
 // ABOUTME: ID/EX pipeline register: operands, immediate, register numbers and control for EX onward.
-// ABOUTME: flush inserts a bubble (load-use stall, RAW stall without forwarding, or taken branch).
+// ABOUTME: flush inserts a bubble by clearing valid and control only; a bubble's data is never used.
 `default_nettype none
 
 module id_ex_reg (
@@ -20,20 +20,22 @@ module id_ex_reg (
     output reg  [31:0] rs1_val, rs2_val, imm,
     output reg  [4:0]  rs1, rs2, rd
 );
+    // Control: cleared by reset or flush, so a bubble writes nothing and never branches.
     always @(posedge clk) begin
         if (rst || flush) begin
-            valid <= 1'b0; pc <= 32'b0;
-            reg_write <= 1'b0; alu_src <= 1'b0; mem_read <= 1'b0; mem_write <= 1'b0;
-            branch <= 1'b0; branch_ne <= 1'b0; halt <= 1'b0; alu_op <= 3'd0;
-            rs1_val <= 32'b0; rs2_val <= 32'b0; imm <= 32'b0;
-            rs1 <= 5'd0; rs2 <= 5'd0; rd <= 5'd0;
+            valid <= 1'b0; reg_write <= 1'b0; mem_read <= 1'b0; mem_write <= 1'b0;
+            branch <= 1'b0; halt <= 1'b0;
         end else begin
-            valid <= valid_in; pc <= pc_in;
-            reg_write <= reg_write_in; alu_src <= alu_src_in; mem_read <= mem_read_in;
-            mem_write <= mem_write_in; branch <= branch_in; branch_ne <= branch_ne_in;
-            halt <= halt_in; alu_op <= alu_op_in;
-            rs1_val <= rs1_val_in; rs2_val <= rs2_val_in; imm <= imm_in;
-            rs1 <= rs1_in; rs2 <= rs2_in; rd <= rd_in;
+            valid <= valid_in; reg_write <= reg_write_in; mem_read <= mem_read_in;
+            mem_write <= mem_write_in; branch <= branch_in; halt <= halt_in;
         end
+    end
+
+    // Data: loads every cycle with no reset. Clearing it on flush would only add a reset
+    // to about 140 flip-flops at the end of the branch-flush path, the slowest in the CPU.
+    always @(posedge clk) begin
+        pc <= pc_in; alu_src <= alu_src_in; branch_ne <= branch_ne_in; alu_op <= alu_op_in;
+        rs1_val <= rs1_val_in; rs2_val <= rs2_val_in; imm <= imm_in;
+        rs1 <= rs1_in; rs2 <= rs2_in; rd <= rd_in;
     end
 endmodule

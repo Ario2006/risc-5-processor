@@ -1,0 +1,16 @@
+benchmark,config,cycles,fmax_mhz,time_us,speedup_vs_single
+bubble_sort,single,591,58.75,10.06,1.0
+bubble_sort,pipe_nofwd,1224,113.86,10.75,0.936
+bubble_sort,pipe_fwd,857,83.89,10.216,0.985
+dep_chain,single,163,58.75,2.774,1.0
+dep_chain,pipe_nofwd,446,113.86,3.917,0.708
+dep_chain,pipe_fwd,205,83.89,2.444,1.135
+fibonacci,single,215,58.75,3.66,1.0
+fibonacci,pipe_nofwd,367,113.86,3.223,1.135
+fibonacci,pipe_fwd,277,83.89,3.302,1.108
+indep_ops,single,162,58.75,2.757,1.0
+indep_ops,pipe_nofwd,244,113.86,2.143,1.287
+indep_ops,pipe_fwd,204,83.89,2.432,1.134
+sum_array,single,86,58.75,1.464,1.0
+sum_array,pipe_nofwd,186,113.86,1.634,0.896
+sum_array,pipe_fwd,136,83.89,1.621,0.903

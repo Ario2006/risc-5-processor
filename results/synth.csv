@@ -1,0 +1,7 @@
+memory,config,lut4,ff,logic_cells,lutram_cells,bram_dp16kd,fmax_median_mhz,fmax_min_mhz,fmax_max_mhz
+distributed,single,1062,43,2076,152,0,58.75,57.68,60.15
+distributed,pipe_nofwd,1123,299,2137,152,0,113.86,110.12,115.49
+distributed,pipe_fwd,1755,308,2765,152,0,83.89,83.59,86.89
+block,single,895,22,1909,152,1,42.21,41.85,42.31
+block,pipe_nofwd,657,327,903,24,2,72.19,70.13,78.76
+block,pipe_fwd,1086,336,1330,24,2,59.14,57.1,65.63
