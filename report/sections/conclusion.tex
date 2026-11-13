@@ -1,0 +1,16 @@
+% ABOUTME: Conclusion: what the measurements show and what we would do next.
+% ABOUTME: Owner: Navodit (review and tighten).
+\section{Conclusion}
+\label{sec:conclusion}
+
+We built a single-cycle RV32I subset CPU and a five-stage pipeline with and
+without forwarding, verified all three against a reference model with 229
+automated checks, and measured them on an ECP5 FPGA. Pipelining raised the
+clock 1.94 times without forwarding and 1.43 times with it. CPI rose to
+1.51 to 2.74 without forwarding and 1.26 to 1.58 with it, and the resulting
+speedup ranged from 0.71 to 1.29. The iron law predicts every one of these
+numbers from the cycle accounting and the critical paths, which is the main
+lesson of the project: a pipeline only pays off when the clock it gains is
+larger than the CPI it loses, and hazards, especially taken branches in tight
+loops, decide that balance. Branch prediction and better balanced stages are
+the natural next steps.

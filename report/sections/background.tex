@@ -1,0 +1,51 @@
+% ABOUTME: Background: CPI, IPC, throughput, the iron law, and the three kinds of hazard.
+% ABOUTME: Owner: Navodit (review and extend with more related work if time allows).
+\section{Background}
+\label{sec:background}
+
+\subsection{Performance measures}
+For a program of $N$ instructions that takes $C$ clock cycles at clock
+frequency $f$,
+\begin{equation}
+\mathrm{CPI} = \frac{C}{N}, \qquad \mathrm{IPC} = \frac{N}{C}, \qquad
+T = \frac{N \cdot \mathrm{CPI}}{f}.
+\label{eq:ironlaw}
+\end{equation}
+The last expression is the iron law of processor performance
+\cite{hennessy2019}. Throughput is $f \cdot \mathrm{IPC}$ instructions per
+second. A single-cycle CPU has $\mathrm{CPI}=1$ exactly; a pipeline aims for
+CPI close to 1 at a much higher $f$.
+
+For the same program, the speedup of a pipeline over the single-cycle design
+follows from (\ref{eq:ironlaw}):
+\begin{equation}
+S = \frac{T_{\text{single}}}{T_{\text{pipe}}} =
+\frac{f_{\text{pipe}} / f_{\text{single}}}{\mathrm{CPI}_{\text{pipe}}}.
+\label{eq:speedup}
+\end{equation}
+The pipeline is faster only when its CPI is below its clock ratio.
+
+\subsection{Pipeline cycle accounting}
+A five-stage pipeline needs four cycles to fill before the first instruction
+completes. After that, every lost cycle has one of two causes in our design:
+a stall, where the instruction in ID waits for an operand, or a flush, where
+a taken branch discards the two younger instructions already fetched. So
+\begin{equation}
+C = N + 4 + \text{stalls} + 2 \cdot \text{taken branches}.
+\label{eq:cycles}
+\end{equation}
+Our test suite checks this identity on every program.
+
+\subsection{Hazards}
+\emph{Structural hazards} arise when two stages need one resource. Separate
+instruction and data memories (a Harvard layout) and a register file with two
+read ports and one write port remove them.
+\emph{Data hazards} arise when an instruction reads a register that an older
+instruction has not yet written. A pipeline either stalls until the value is
+in the register file, or forwards it from a later pipeline register straight
+to the ALU inputs. A load is the exception: its data only exists after MEM,
+so a use in the very next instruction must wait one cycle even with
+forwarding (the load-use hazard).
+\emph{Control hazards} arise because the next PC after a branch is known only
+when the branch resolves. We predict not taken and resolve branches in EX, so
+each taken branch costs two cycles.

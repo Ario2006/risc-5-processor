@@ -1,0 +1,76 @@
+% ABOUTME: The instruction subset and the single-cycle datapath and control unit.
+% ABOUTME: Owner: Aryan (review against rtl/common and rtl/single_cycle, then defend in viva).
+\section{Instruction Set and Single-Cycle Design}
+\label{sec:single}
+
+\subsection{Instruction subset}
+The brief suggests ADD, SUB, ADDI, LW, SW, BEQ and BNE. We add the logic,
+compare and shift instructions needed for realistic benchmarks such as
+sorting, 18 instructions in all (Table~\ref{tab:isa}). Memory accesses are
+aligned 32 bit words. \texttt{ecall} marks the end of a program.
+
+\begin{table}[t]
+\centering
+\caption{Supported RV32I instructions}
+\label{tab:isa}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Format & Instructions \\
+\midrule
+R & \texttt{add sub and or xor slt sll} \\
+I & \texttt{addi andi ori xori slti slli} \\
+I (load), S & \texttt{lw}, \texttt{sw} \\
+B & \texttt{beq bne} \\
+System & \texttt{ecall} (halt) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Datapath}
+The datapath is built from shared modules in \texttt{rtl/common}: a 32 bit
+ALU with seven operations, a $32\times32$ register file with two
+asynchronous read ports and one synchronous write port (x0 always reads
+zero), an immediate generator for the I, S and B formats, and two 256 word
+memories. In the single-cycle CPU (\texttt{cpu\_single.v}) one instruction
+passes through all of them in one clock period: the PC addresses instruction
+memory, the fields address the register file, the ALU computes a result or an
+address, data memory is read or written, and the write-back mux returns the
+ALU result or the loaded word to the register file. A taken branch loads
+$\mathrm{PC}+\mathrm{imm}$ instead of $\mathrm{PC}+4$.
+
+\subsection{Control unit}
+The control unit (\texttt{control.v}) decodes the opcode, \texttt{funct3}
+and \texttt{funct7} into the signals of Table~\ref{tab:control}. It also
+reports whether the instruction really reads \texttt{rs1} and \texttt{rs2}.
+In an I-type instruction the \texttt{rs2} field holds immediate bits, and
+without this flag the pipeline's hazard unit would stall on registers the
+instruction never reads.
+
+\begin{table}[t]
+\centering
+\caption{Main control signals per instruction class}
+\label{tab:control}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Class & RegWr & ALUSrc & MemRd & MemWr & Br & ALU \\
+\midrule
+R-type & 1 & reg & 0 & 0 & 0 & funct \\
+I-type & 1 & imm & 0 & 0 & 0 & funct3 \\
+\texttt{lw} & 1 & imm & 1 & 0 & 0 & add \\
+\texttt{sw} & 0 & imm & 0 & 1 & 0 & add \\
+\texttt{beq}/\texttt{bne} & 0 & reg & 0 & 0 & 1 & compare \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Critical path}
+Place and route on the ECP5 (Section~\ref{sec:results}) reports a longest
+path of 17.0\,ns, or 58.75\,MHz. Because the instruction memory is a ROM built
+from logic, Yosys moves the PC register to the ROM's output, so the path starts
+with the instruction already in flip-flops. From there it runs through a
+register file read (2.1\,ns), the ALU computing the address (3.2\,ns), a read of
+the 256 word data memory (8.0\,ns, the largest share) and the write-back mux to
+the register file's write port (3.2\,ns, plus setup). Every instruction pays
+for this path, even an \texttt{addi} that never touches data memory.

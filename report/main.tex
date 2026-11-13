@@ -1,0 +1,56 @@
+% ABOUTME: Main document of the IEEE conference report for the 5-stage pipelined RISC-V project.
+% ABOUTME: Title, authors and abstract; every section is a fragment under sections/.
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{listings}
+\graphicspath{{../figures/}}
+\lstset{basicstyle=\ttfamily\footnotesize, columns=fullflexible, frame=single}
+
+\begin{document}
+
+\title{A Five-Stage Pipelined RISC-V Processor: Design, Verification and the Measured Cost of Hazards}
+
+\author{\IEEEauthorblockN{Sarvesh Srinath, Trishit Swarnakar, Aryan Kumar,
+Husain Khorakiwala and Navodit Sharma}
+\IEEEauthorblockA{Modern Computer Architecture, Verilog Project 3}}
+
+\maketitle
+
+\begin{abstract}
+We design a single-cycle processor for an 18 instruction subset of RV32I in
+Verilog, verify it, and partition the same datapath into the classic
+five-stage pipeline (IF, ID, EX, MEM, WB) with pipeline registers, a hazard
+unit and a forwarding unit. Every design is checked against a Python
+instruction set simulator on 9 directed hazard tests, 5 benchmarks and 40
+constrained-random programs, 229 automated checks in all. On a Lattice ECP5
+FPGA the pipeline raises the maximum clock from 58.8 MHz to 113.9 MHz
+without forwarding and to 83.9 MHz with it. Without forwarding, CPI ranges
+from 1.51 to 2.74; forwarding removes every arithmetic stall and brings CPI to
+1.26 to 1.58. Because every taken branch costs two cycles and our loops end
+in one, the net execution time speedup over the single-cycle design is
+0.90 to 1.14 with forwarding and 0.71 to 1.29 without. The iron law of
+performance explains every result: with forwarding the pipeline wins only
+when its CPI stays below the clock ratio of 1.43. We trace each lost cycle
+to its cause and each nanosecond of the critical path to its stage.
+\end{abstract}
+
+\begin{IEEEkeywords}
+RISC-V, pipelining, hazards, forwarding, CPI, FPGA, Verilog
+\end{IEEEkeywords}
+
+\input{sections/intro}
+\input{sections/background}
+\input{sections/single_cycle}
+\input{sections/pipeline}
+\input{sections/verification}
+\input{sections/results}
+\input{sections/conclusion}
+\input{sections/contributions}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}
