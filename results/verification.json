@@ -68,5 +68,5 @@
     "long file paths in testbench and memory loaders"
   ],
   "report_build": "Tectonic succeeded; underfull-box spacing warnings only",
-  "review": "Independent review found no blocking correctness issues. Added time margins to address its endpoint-label finding."
+  "provenance": "Manually collected validation record. Mutation experiments were run separately using a temporary script and isolated RTL copies; no checked-in command regenerates this file, and make test does not run these mutations."
 }
