@@ -356,17 +356,25 @@ def fig_architecture() -> None:
 
 def fig_architecture_single() -> None:
     """Block diagram of the single-cycle datapath, control unit and critical path."""
+    rows = read_csv("synth.csv")
+    row = next(r for r in rows if r["config"] == "single" and r["memory"] == "distributed")
+    fmax = float(row["fmax_median_mhz"])
+    period_ns = 1000.0 / fmax
+
     fig, ax = plt.subplots(figsize=(13, 6.4))
     ax.set_xlim(0, 24)
     ax.set_ylim(0, 11.5)
     ax.axis("off")
 
-    ax.text(0.5, 10.8, "Single-cycle RV32I subset CPU (entire datapath executes in one 17.0 ns clock cycle)",
+    crit_color = "#c93b2b"
+    ctrl_color = "#2e7d32"
+    branch_color = "#6250d6"
+
+    ax.text(0.5, 10.8, f"Single-cycle RV32I subset CPU (clock period {period_ns:.1f} ns, {fmax:.2f} MHz)",
             fontsize=12, fontweight="bold")
 
     # Critical path highlight banner
-    crit_color = "#c93b2b"
-    ax.text(0.5, 10.2, "Worst-case critical path (load word): PC → imem → regfile read → ALU addr → dmem read → WB mux → regfile setup (58.75 MHz)",
+    ax.text(0.5, 10.2, f"Critical path in distributed RAM: instr (retimed PC) → regfile read → ALU addr → dmem read → WB mux → regfile setup ({fmax:.2f} MHz)",
             fontsize=8.5, color=crit_color, fontweight="bold")
 
     # PC Mux & PC
@@ -385,13 +393,13 @@ def fig_architecture_single() -> None:
     box(ax, 3.5, 4.2, 2.1, 2.2, "Instruction\nmemory\n(256 words)")
     arrow(ax, (2.9, 5.3), (3.5, 5.3))
 
-    # Instruction bus split
-    ax.plot([5.6, 6.0], [5.3, 5.3], color=INK, linewidth=1.2)
+    # Instruction bus split out of IMEM (Critical path starts at retimed instr)
+    ax.plot([5.6, 6.0], [5.3, 5.3], color=crit_color, linewidth=2.0)
 
     # Control unit
-    box(ax, 6.0, 7.5, 2.2, 1.4, "Control\nunit", fill="#eef3e8", size=8.5)
-    ax.plot([5.8, 5.8, 6.0], [5.3, 8.2, 8.2], color=INK, linewidth=1.1)
-    arrow(ax, (5.8, 8.2), (6.0, 8.2))
+    box(ax, 6.0, 7.6, 2.2, 1.5, "Control\nunit", fill="#eef3e8", size=8.5)
+    ax.plot([5.8, 5.8, 6.0], [5.3, 8.35, 8.35], color=INK, linewidth=1.1)
+    arrow(ax, (5.8, 8.35), (6.0, 8.35))
 
     # Immediate generator
     box(ax, 6.0, 2.0, 2.2, 1.2, "Immediate\ngenerator", size=8)
@@ -400,84 +408,101 @@ def fig_architecture_single() -> None:
 
     # Branch Target adder (PC + imm)
     box(ax, 3.5, 8.0, 1.5, 1.0, "Branch\nTarget (+)", size=7.5)
-    # PC to target adder
     ax.plot([2.35, 2.35, 3.5], [5.9, 8.7, 8.7], color=INK, linewidth=1.0)
     arrow(ax, (3.2, 8.7), (3.5, 8.7))
-    # imm to target adder
     ax.plot([8.2, 8.5, 8.5, 4.25, 4.25], [2.6, 2.6, 1.4, 1.4, 8.0], color=INK, linewidth=1.0)
     arrow(ax, (4.25, 7.8), (4.25, 8.0))
     # Branch target output to PC mux
-    ax.plot([5.0, 5.3, 5.3, 0.7, 0.7], [8.5, 8.5, 9.4, 9.4, 6.2], color=INK, linewidth=1.1)
-    arrow(ax, (0.7, 6.6), (0.7, 6.2))
+    ax.plot([5.0, 5.3, 5.3, 0.7, 0.7], [8.5, 8.5, 9.4, 9.4, 6.2], color=branch_color, linewidth=1.1)
+    arrow(ax, (0.7, 6.6), (0.7, 6.2), color=branch_color)
 
-    # Register file
-    box(ax, 8.7, 3.7, 2.5, 3.0, "Register\nfile\n32 x 32\n(x0 = 0)", size=8)
-    ax.plot([5.8, 8.7], [5.7, 5.7], color=INK, linewidth=1.1)
-    arrow(ax, (8.3, 5.7), (8.7, 5.7))
-    ax.text(7.4, 5.85, "rs1, rs2, rd", fontsize=7.5, color=INK2)
+    # Register file (Critical path passes through rs1 read)
+    ax.add_patch(Rectangle((8.7, 3.7), 2.5, 3.0, facecolor=CELL_FILL, edgecolor=crit_color, linewidth=1.5, zorder=3))
+    ax.text(8.7 + 1.25, 3.7 + 1.5, "Register\nfile\n32 x 32\n(x0 = 0)", ha="center", va="center", fontsize=8, zorder=4)
+    ax.plot([5.8, 8.7], [5.7, 5.7], color=crit_color, linewidth=2.0)
+    arrow(ax, (8.3, 5.7), (8.7, 5.7), color=crit_color, lw=2.0)
+    ax.text(7.35, 5.88, "rs1, rs2, rd", fontsize=7.5, color=INK2)
     ax.plot([5.8, 8.7], [4.5, 4.5], color=INK, linewidth=1.1)
     arrow(ax, (8.3, 4.5), (8.7, 4.5))
 
     # ALU Src Mux
-    box(ax, 12.0, 3.4, 0.9, 1.5, "ALU\nSrc\nMux", size=7.5)
-    arrow(ax, (11.2, 4.4), (12.0, 4.4))
-    ax.plot([8.2, 11.6, 11.6, 12.0], [2.6, 2.6, 3.8, 3.8], color=INK, linewidth=1.1)
-    arrow(ax, (11.6, 3.8), (12.0, 3.8))
+    box(ax, 12.0, 3.3, 0.9, 1.5, "ALU\nSrc\nMux", size=7.5)
+    arrow(ax, (11.2, 4.3), (12.0, 4.3))
+    ax.plot([8.2, 11.6, 11.6, 12.0], [2.6, 2.6, 3.7, 3.7], color=crit_color, linewidth=1.8)
+    arrow(ax, (11.6, 3.7), (12.0, 3.7), color=crit_color, lw=1.8)
 
-    # ALU
-    box(ax, 13.5, 3.7, 1.8, 2.8, "ALU", weight="bold")
-    arrow(ax, (11.2, 5.8), (13.5, 5.8))
-    arrow(ax, (12.9, 4.15), (13.5, 4.15))
+    # ALU (Critical path computes memory address a + imm)
+    ax.add_patch(Rectangle((13.5, 3.6), 1.8, 2.8, facecolor=CELL_FILL, edgecolor=crit_color, linewidth=1.5, zorder=3))
+    ax.text(13.5 + 0.9, 3.6 + 1.4, "ALU", ha="center", va="center", fontsize=8.5, fontweight="bold", zorder=4)
+    arrow(ax, (11.2, 5.7), (13.5, 5.7), color=crit_color, lw=2.0)
+    arrow(ax, (12.9, 4.05), (13.5, 4.05), color=crit_color, lw=1.8)
 
-    # Branch comparator
-    box(ax, 12.0, 7.6, 3.0, 1.2, "Branch compare\n(rs1 == rs2) ^ bne", fill="#fbeedd", size=7.5)
-    ax.plot([11.5, 11.5, 12.0], [5.8, 8.3, 8.3], color=INK, linewidth=1.0)
-    arrow(ax, (11.8, 8.3), (12.0, 8.3))
-    ax.plot([11.7, 11.7, 12.0], [4.4, 7.8, 7.8], color=INK, linewidth=1.0)
-    arrow(ax, (11.8, 7.8), (12.0, 7.8))
-    ax.plot([15.0, 15.3, 15.3, 0.95, 0.95], [8.2, 8.2, 9.8, 9.8, 6.2], color=crit_color, linewidth=1.2)
-    arrow(ax, (0.95, 6.6), (0.95, 6.2))
-    ax.text(7.5, 9.95, "taken = branch && condition (redirects next PC)", fontsize=8, color=crit_color, fontweight="bold")
+    # Branch comparator (lowered to y=6.7 to leave clear space above)
+    box(ax, 11.8, 6.7, 3.2, 1.1, "Branch compare\n(rs1 == rs2) ^ bne", fill="#fbeedd", size=7.5)
+    ax.plot([11.4, 11.4, 11.8], [5.7, 7.3, 7.3], color=INK, linewidth=1.0)
+    arrow(ax, (11.6, 7.3), (11.8, 7.3))
+    ax.plot([11.6, 11.6, 11.8], [4.3, 6.9, 6.9], color=INK, linewidth=1.0)
+    arrow(ax, (11.7, 6.9), (11.8, 6.9))
 
-    # Data Memory
-    box(ax, 16.7, 3.9, 2.5, 2.4, "Data\nmemory\n(256 words)")
-    arrow(ax, (15.3, 5.1), (16.7, 5.1))
-    ax.plot([11.4, 11.4, 16.2, 16.2, 16.7], [4.4, 3.1, 3.1, 4.3, 4.3], color=INK, linewidth=1.0)
-    arrow(ax, (16.2, 4.3), (16.7, 4.3))
-    ax.text(13.8, 2.85, "store data (rs2_val)", fontsize=7.5, color=INK2)
+    # Taken redirect wire (in branch_color, routed cleanly at y=8.3)
+    ax.plot([15.0, 15.3, 15.3, 0.95, 0.95], [7.25, 7.25, 8.3, 8.3, 6.2], color=branch_color, linewidth=1.2)
+    arrow(ax, (0.95, 6.6), (0.95, 6.2), color=branch_color)
+    ax.text(8.0, 8.45, "taken = branch && condition (redirects next PC)", fontsize=8, color=branch_color, fontweight="bold")
 
-    # WB Mux
-    box(ax, 20.2, 4.3, 1.0, 1.8, "WB\nMux", size=8)
-    arrow(ax, (19.2, 5.1), (20.2, 5.1))
-    ax.plot([15.8, 15.8, 19.8, 19.8, 20.2], [5.1, 6.8, 6.8, 4.6, 4.6], color=INK, linewidth=1.1)
-    arrow(ax, (19.8, 4.6), (20.2, 4.6))
+    # Data Memory (Critical path reads data memory)
+    ax.add_patch(Rectangle((16.7, 3.8), 2.5, 2.4, facecolor=CELL_FILL, edgecolor=crit_color, linewidth=1.5, zorder=3))
+    ax.text(16.7 + 1.25, 3.8 + 1.2, "Data\nmemory\n(256 words)", ha="center", va="center", fontsize=8.5, zorder=4)
+    arrow(ax, (15.3, 5.0), (16.7, 5.0), color=crit_color, lw=2.0)
+    # store data (rs2) to dmem
+    ax.plot([11.3, 11.3, 16.2, 16.2, 16.7], [4.3, 2.9, 2.9, 4.2, 4.2], color=INK, linewidth=1.0)
+    arrow(ax, (16.2, 4.2), (16.7, 4.2))
+    ax.text(13.6, 2.65, "store data (rs2_val)", fontsize=7.5, color=INK2)
 
-    # Write-back bus back to Register File
-    ax.plot([21.2, 22.5, 22.5, 9.8, 9.8], [5.2, 5.2, 0.7, 0.7, 3.7], color=INK, linewidth=1.3)
-    arrow(ax, (9.8, 1.5), (9.8, 3.7))
-    ax.text(14.5, 0.45, "write-back: wb_data (ALU result or load data) to rd", fontsize=8, color=INK2)
+    # WB Mux (Critical path selects load data)
+    ax.add_patch(Rectangle((20.2, 4.2), 1.0, 1.8, facecolor=CELL_FILL, edgecolor=crit_color, linewidth=1.5, zorder=3))
+    ax.text(20.2 + 0.5, 4.2 + 0.9, "WB\nMux", ha="center", va="center", fontsize=8, zorder=4)
+    arrow(ax, (19.2, 5.0), (20.2, 5.0), color=crit_color, lw=2.0)
+    # alu_y bypass dmem to WB mux
+    ax.plot([15.6, 15.6, 19.8, 19.8, 20.2], [5.0, 6.4, 6.4, 4.5, 4.5], color=INK, linewidth=1.1)
+    arrow(ax, (19.8, 4.5), (20.2, 4.5))
 
-    # Control lines (dashed colored)
-    ctrl_col = "#2e7d32"
-    ax.plot([8.2, 9.2, 9.2], [8.0, 8.0, 6.7], color=ctrl_col, lw=1.1, ls="--")
-    arrow(ax, (9.2, 7.0), (9.2, 6.7), color=ctrl_col, ls="--")
-    ax.text(8.5, 8.1, "RegWr", fontsize=7.5, color=ctrl_col)
+    # Write-back bus back to Register File (Critical path completes write-back)
+    ax.plot([21.2, 22.5, 22.5, 9.8, 9.8], [5.1, 5.1, 0.7, 0.7, 3.7], color=crit_color, linewidth=2.0)
+    arrow(ax, (9.8, 1.5), (9.8, 3.7), color=crit_color, lw=2.0)
+    ax.text(14.5, 0.45, "write-back: wb_data (ALU result or load data) to rd", fontsize=8, color=crit_color, fontweight="bold")
 
-    ax.plot([8.2, 12.4, 12.4], [7.7, 7.7, 4.9], color=ctrl_col, lw=1.1, ls="--")
-    arrow(ax, (12.4, 5.2), (12.4, 4.9), color=ctrl_col, ls="--")
-    ax.text(10.5, 7.8, "ALUSrc", fontsize=7.5, color=ctrl_col)
+    # Legend for critical path
+    ax.plot([18.2, 19.2], [9.7, 9.7], color=crit_color, linewidth=2.2)
+    ax.text(19.4, 9.7, "worst-case critical path (lw)", va="center", fontsize=8, color=crit_color, fontweight="bold")
 
-    ax.plot([8.2, 14.4, 14.4], [7.5, 7.5, 6.5], color=ctrl_col, lw=1.1, ls="--")
-    arrow(ax, (14.4, 6.8), (14.4, 6.5), color=ctrl_col, ls="--")
-    ax.text(13.2, 7.3, "ALUOp", fontsize=7.5, color=ctrl_col)
+    # Control lines (routed high at y=8.9, 9.1, 9.3 so they clear all blocks)
+    ax.plot([8.2, 9.2, 9.2], [8.0, 8.0, 6.7], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (9.2, 7.0), (9.2, 6.7), color=ctrl_color, ls="--")
+    ax.text(8.5, 8.1, "RegWr", fontsize=7.5, color=ctrl_color)
 
-    ax.plot([8.2, 17.5, 17.5], [8.4, 8.4, 6.3], color=ctrl_col, lw=1.1, ls="--")
-    arrow(ax, (17.5, 6.6), (17.5, 6.3), color=ctrl_col, ls="--")
-    ax.text(16.5, 8.55, "MemWr", fontsize=7.5, color=ctrl_col)
+    ax.plot([8.2, 12.4, 12.4], [7.7, 7.7, 4.8], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (12.4, 5.1), (12.4, 4.8), color=ctrl_color, ls="--")
+    ax.text(10.5, 7.8, "ALUSrc", fontsize=7.5, color=ctrl_color)
 
-    ax.plot([8.2, 20.7, 20.7], [8.6, 8.6, 6.1], color=ctrl_col, lw=1.1, ls="--")
-    arrow(ax, (20.7, 6.4), (20.7, 6.1), color=ctrl_col, ls="--")
-    ax.text(19.2, 8.75, "MemRd", fontsize=7.5, color=ctrl_col)
+    # Branch control to branch compare box
+    ax.plot([8.2, 12.2, 12.2], [7.9, 7.9, 7.8], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (12.2, 7.9), (12.2, 7.8), color=ctrl_color, ls="--")
+    ax.text(9.7, 8.05, "Branch/NE", fontsize=7.5, color=ctrl_color)
+
+    # ALUOp
+    ax.plot([8.2, 14.4, 14.4], [7.5, 7.5, 6.4], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (14.4, 6.7), (14.4, 6.4), color=ctrl_color, ls="--")
+    ax.text(13.2, 7.3, "ALUOp", fontsize=7.5, color=ctrl_color)
+
+    # MemWr routed high at y=9.0
+    ax.plot([8.2, 17.5, 17.5], [9.0, 9.0, 6.2], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (17.5, 6.5), (17.5, 6.2), color=ctrl_color, ls="--")
+    ax.text(16.5, 9.15, "MemWr", fontsize=7.5, color=ctrl_color)
+
+    # MemRd routed high at y=9.3
+    ax.plot([8.2, 20.7, 20.7], [9.3, 9.3, 6.0], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (20.7, 6.3), (20.7, 6.0), color=ctrl_color, ls="--")
+    ax.text(19.2, 9.45, "MemRd", fontsize=7.5, color=ctrl_color)
 
     fig.savefig(FIG / "architecture_single.png")
     plt.close(fig)

@@ -16,7 +16,7 @@ The entire datapath is combinational except for state updates (PC, register file
 which latch synchronously on the rising clock edge.
 
 ```
-       +----------------------- taken (PC + imm) -------------------------+
+       +----------------------- taken: PC + imm --------------------------+
        |                                                                  |
        v                                                                  |
    [PC Mux] ---> [ PC ] ---> [ Instruction Mem ] ---> [ Control Unit ]    |
@@ -28,26 +28,27 @@ which latch synchronously on the rising clock edge.
                                     v                      v              |
                              [ Reg File ] ----------> [ALU Src Mux]       |
                               (rs1, rs2)                   |              |
-                                |       |                  |              |
-                                |       +------------------+              |
                                 |       |                  v              |
                                 |       +-----------> [ 32-bit ALU ]      |
+                                |       |                  |              |
                                 v       v                  |              |
                              [ Branch == ]                 v              |
                                     |               [ Data Memory ]       |
                                     v                      |              |
                                   taken                    v              |
-                                    |               [  WB Mux  ] <--------+
-                                    |                      | (ALU / Mem data)
-                                    |                      v
-                                    +---------------> [ Regfile wdata ]
+                                    |               [  WB Mux  ] <--------+ (alu_y)
+                                    |                      |
+                                    |                      v (wb_data)
+                                    |               [ Regfile wdata ]
+                                    |
+                                    +-------------------------------------+
 ```
 
 ### Step-by-Step Flow:
 1. **Fetch (IF):** PC addresses the 256-word instruction memory (`imem.v`), yielding a 32-bit instruction word.
 2. **Decode (ID):**
    - Opcode bits `[6:0]`, `funct3`, and `funct7` feed `control.v`.
-   - `imm_gen.v` sign-extends 12-bit immediates for I, S, and B formats directly based on `instr[6:0]`.
+   - `imm_gen.v` sign-extends immediates: 12-bit for I and S formats, and 13-bit (with bit 0 hardwired to 0) for B-format branches.
    - `regfile.v` reads source operands `rs1_val = regs[instr[19:15]]` and `rs2_val = regs[instr[24:20]]` asynchronously.
 3. **Execute (EX):**
    - The ALU operand B multiplexer picks `rs2_val` (`alu_src = 0`, R-type/branch) or `imm` (`alu_src = 1`, I-type/load/store).
@@ -74,6 +75,8 @@ which latch synchronously on the rising clock edge.
 | **Branch** (`bne`) | 0 | 0 (reg) | 0 | 0 | 1 | 1 | `ALU_ADD` | 1 | 1 |
 | **System** (`ecall`) | 0 | 0 | 0 | 0 | 0 | 0 | `ALU_ADD` | 0 | 0 |
 
+*Note on Branches:* Because branch conditions are evaluated by a dedicated equality comparator, `alu_op` is not needed for branches and stays at its default value (`ALU_ADD`).
+
 ---
 
 ## 3. Critical Path Analysis, on the whiteboard
@@ -83,19 +86,18 @@ From `results/synth.csv` and `results/synth_runs.csv`:
 - **Clock Period:** $T = \frac{1}{58.75\text{ MHz}} = \mathbf{17.0\text{ ns}}$.
 - **Worst-case Path:** Load word (`lw`).
   `synth_runs.csv` pinpoints the start and end registers:
-  - Start: `cpu.core.immg.instr_TRELLIS_FF_Q` (PC / instruction register).
+  - Start: `cpu.core.immg.instr_TRELLIS_FF_Q` (PC moved to ROM output during synthesis).
   - End: `cpu.core.rf.regs.*$DPRAM_COMB*` (register file RAM write port).
 
 ```
-[ PC / instr ] ---> [ Regfile Read ] ---> [ ALU Addr ] ---> [ DMem Read ] ---> [ WB Mux ] ---> [ Regfile Setup ]
-     (Start)                                                                                          (End)
+[ instr (retimed PC) ] ---> [ Regfile Read ] ---> [ ALU Addr ] ---> [ DMem Read ] ---> [ WB Mux ] ---> [ Regfile Setup ]
+       (Start)                                                                                                (End)
 ```
 
 ### Why does this limit performance?
 In a single-cycle CPU, the clock cycle must accommodate this worst-case **17.0 ns** path.
-Simple instructions like `addi` or `add` finish in less than half that time, but must idle until
-the clock edge. Slicing this into a 5-stage pipeline isolates the stages with registers,
-raising $F_{\max}$ to 113.86 MHz (no fwd) and 83.89 MHz (fwd).
+Simple instructions like `addi` or `add` do not access data memory, but must still wait for the full 17.0 ns cycle.
+Slicing this into a 5-stage pipeline isolates the stages with registers, raising $F_{\max}$ to 113.86 MHz (no fwd) and 83.89 MHz (fwd).
 
 ---
 
@@ -105,7 +107,7 @@ raising $F_{\max}$ to 113.86 MHz (no fwd) and 83.89 MHz (fwd).
 - We do not use the ALU to subtract and check zero for branches in single-cycle.
 - `cpu_single.v` uses a direct comparator: `(rs1_val == rs2_val) ^ branch_ne`.
 - Dedicated branch target adder: $\text{PC} + \text{imm}$ runs in parallel with ALU execution.
-- Keeps branch evaluation completely separate and simplifies control logic.
+- Keeps branch evaluation completely separate and avoids complicating ALU control.
 
 ### B. Purpose of `uses_rs1` and `uses_rs2`
 - In I-type instructions, bits `instr[24:20]` hold immediate bits (`imm[4:0]`), not a register index.
@@ -134,13 +136,21 @@ raising $F_{\max}$ to 113.86 MHz (no fwd) and 83.89 MHz (fwd).
 
 ## 5. Likely Viva Traps & Sharp Answers
 
-- **Q: "If single-cycle has CPI = 1.00 and pipeline has CPI 1.26 to 1.58, why is single-cycle slower?"**
-  - **A:** The Iron Law: $\text{Execution Time} = N \times \text{CPI} \times T_{\text{clk}} = \frac{N \times \text{CPI}}{f}$.
-    Single-cycle has lower CPI (1.00), but its clock period is $17.0\text{ ns}$ ($58.75\text{ MHz}$).
-    The pipeline has higher CPI due to stalls and flushes, but its clock period is much shorter: $8.8\text{ ns}$ ($113.86\text{ MHz}$) without forwarding and $11.9\text{ ns}$ ($83.89\text{ MHz}$) with forwarding. Whenever $\text{CPI}_{\text{pipe}} < \frac{f_{\text{pipe}}}{f_{\text{single}}}$ ($1.43$ for forwarding), the pipeline wins in wall-clock time!
+- **Q: "Is single-cycle always slower than pipelining?"**
+  - **A:** No! Execution time depends on the Iron Law: $\text{Time} = \frac{N \times \text{CPI}}{f}$.
+    Single-cycle has $\text{CPI} = 1.00$ by construction. Pipelining increases clock frequency, but also increases CPI due to branch flushes (2 cycles each) and hazard stalls.
+    From `results/performance.csv`:
+    - Single-cycle **beats both pipelined designs** on `bubble_sort` (speedups 0.94x for no-fwd, 0.98x for fwd) and `sum_array` (0.90x and 0.90x), because tight loops suffer heavy 2-cycle branch flush penalties and load-use stalls that outweigh the clock frequency gain.
+    - Single-cycle also **beats the pipeline without forwarding** on `dep_chain` (0.71x), where back-to-back RAW stalls balloon CPI to 2.74.
+    - The pipeline only wins when its CPI is lower than its clock ratio: $\text{CPI} < 1.43$ for forwarding, or $\text{CPI} < 1.94$ without forwarding.
+
+- **Q: "What are the CPI ranges for the two pipelined designs?"**
+  - **A:**
+    - Pipeline with forwarding: **1.26 to 1.58** (stalls only on load-use hazards and 2-cycle branch flushes).
+    - Pipeline without forwarding: **1.51 to 2.74** (stalls on every RAW data hazard plus 2-cycle branch flushes).
 
 - **Q: "Why does `imm_gen` not need a control signal from the control unit?"**
   - **A:** RISC-V instruction formats place immediate bits in fixed locations uniquely identified by opcode bits `instr[6:0]`. Store instructions (`0100011`) are S-type, branch instructions (`1100011`) are B-type, and all other supported immediate instructions (loads, ALU immediates) use the standard I-type format. Decoding directly from `instr[6:0]` eliminates extra control muxes.
 
-- **Q: "Why did you use separate instruction and data memories (Harvard)?"**
+- **Q: "Why are instruction and data memories separate (Harvard)?"**
   - **A:** To prevent structural hazards. In a single-cycle CPU, an instruction must be fetched from instruction memory in the very same cycle that a `lw` or `sw` reads or writes data memory. A unified single-port memory would cause a structural conflict.
