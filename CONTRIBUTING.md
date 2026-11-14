@@ -6,7 +6,7 @@ Same rules as our T081 repo. Read this once before your first pull request.
 
 1. **Never push to `main`.** Every change goes through a pull request (PR).
 2. **One task, one branch, one PR.** Pick your issue, branch for it, write `Closes #N` in the PR.
-3. **Sarvesh reviews and merges.** You do not merge your own PR. Sarvesh's PRs are reviewed by any teammate.
+3. **Sarvesh and Husain review and merge.** You do not merge your own PR. Their own PRs are reviewed and merged by any other teammate.
 4. **`make test` passes before you push.** If you touch `rtl/`, also run `make synth perf figures`
    and commit the new `results/` and `figures/`, because the report quotes them.
 5. **Every number in the report comes from `results/`.** Never type a number you did not read there.
