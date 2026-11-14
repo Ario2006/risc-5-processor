@@ -1,7 +1,39 @@
-% ABOUTME: Background: CPI, IPC, throughput, the iron law, and the three kinds of hazard.
-% ABOUTME: Owner: Navodit (review and extend with more related work if time allows).
-\section{Background}
+% ABOUTME: Literature review (prior pipelines, open RISC-V cores, branch handling) and background.
+% ABOUTME: Owner: Navodit. Background covers CPI, IPC, the iron law and the three kinds of hazard.
+\section{Literature Review and Background}
 \label{sec:background}
+
+\subsection{Pipelined processors}
+The Stanford MIPS processor \cite{hennessy1982} showed that a simple
+load/store instruction set lets a single chip run a deep pipeline at a high
+clock. MIPS left hazards to the compiler, which had to schedule instructions
+so that no result was used too early. Later designs, including ours, detect
+hazards in hardware instead. The five-stage pipeline we build (IF, ID, EX,
+MEM, WB) is the one Patterson and Hennessy use to teach pipelining
+\cite{patterson2021}, together with the forwarding unit, the load-use stall
+and the branch flush. Hennessy and Patterson \cite{hennessy2019} give the
+iron law of performance that we use to explain every result.
+
+\subsection{RISC-V and open-source cores}
+RISC-V is a free and open instruction set from UC Berkeley. Asanovi\'c and
+Patterson \cite{asanovic2014} argue that a free ISA lets anyone build and
+share implementations without a licence, and that a simple RISC design is the
+right base for one. Open RISC-V cores now cover a wide range of designs.
+PicoRV32 \cite{picorv32} is optimised for size and clock speed, not
+throughput: it takes several cycles per instruction (an average CPI of about
+4.2 on Dhrystone). Ibex \cite{ibex} has a two-stage pipeline, fetch and a
+combined decode and execute stage. Rocket \cite{rocketchip} is a five-stage
+in-order core like ours, with caches and branch prediction, and has been
+manufactured and has booted Linux. Our design is the same five stages as
+Rocket with none of those extras, so the cost of each hazard can be measured
+on its own.
+
+\subsection{Branch handling}
+Smith \cite{smith1981} compared branch prediction strategies and showed that
+dynamic prediction, which learns from each branch's history, beats fixed
+rules. We use the simplest fixed rule, predict not taken, and Section
+\ref{sec:results} measures what it costs. That cost is the starting point for
+our Phase II work.
 
 \subsection{Performance measures}
 For a program of $N$ instructions that takes $C$ clock cycles at clock
