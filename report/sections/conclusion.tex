@@ -1,16 +1,43 @@
-% ABOUTME: Conclusion: what the measurements show and what we would do next.
-% ABOUTME: Owner: Navodit (review and tighten).
-\section{Conclusion}
+% ABOUTME: Conclusion: what Phase I built and measured, where the project stands, and the Phase II plan.
+% ABOUTME: Owner: Navodit. Every number here is from results/ (cpi.csv, performance.csv, synth.csv).
+\section{Conclusion, Current Progress and Phase II Plan}
 \label{sec:conclusion}
 
-We built a single-cycle RV32I subset CPU and a five-stage pipeline with and
-without forwarding, verified all three against a reference model with 248
-automated checks, and measured them on an ECP5 FPGA. Pipelining raised the
-clock 1.94 times without forwarding and 1.43 times with it. CPI rose to
-1.51 to 2.74 without forwarding and 1.26 to 1.58 with it, and the resulting
-speedup ranged from 0.71 to 1.29. The iron law predicts every one of these
-numbers from the cycle accounting and the critical paths, which is the main
-lesson of the project: a pipeline only pays off when the clock it gains is
-larger than the CPI it loses, and hazards, especially taken branches in tight
-loops, decide that balance. Branch prediction and better balanced stages are
-the natural next steps.
+\subsection{Conclusion}
+We built three processors for the same RV32I subset: a single-cycle CPU and
+a five-stage pipeline with and without forwarding. Pipelining raised the
+clock 1.94 times without forwarding and 1.43 times with it, but CPI rose to
+1.51 to 2.74 and 1.26 to 1.58, so the net speedup ranged from 0.71 to 1.29.
+The iron law explains each of these numbers: a pipeline is faster only when
+the clock it gains is larger than the CPI it loses. In our programs the
+largest single loss is the two-cycle flush after every taken branch, because
+every loop iteration ends in one.
+
+\subsection{Current progress}
+Phase I is complete. All three CPUs are written in Verilog and pass all 248
+automated checks against the reference simulator. They are synthesised and
+placed for a Lattice ECP5 FPGA, and the CPI and speedup study is done. Every
+table and figure in this report is generated from the repository by
+\texttt{make synth perf figures}, so any change in Phase II can be measured
+the same way.
+
+\subsection{Phase II plan}
+Phase II targets the two losses this report measures.
+\begin{enumerate}
+\item \emph{Branches.} Taken branch flushes add 0.23 to 0.35 to CPI. We will
+first resolve branches in ID, which cuts the penalty to one cycle at the cost
+of a comparator and forwarding paths in ID. Then we will add a dynamic
+predictor with two-bit counters and a branch target buffer \cite{smith1981},
+so a correctly predicted loop branch costs no cycles.
+\item \emph{Stage balance.} EX is the longest stage in both pipelines (8.8 and
+11.9\,ns). We will split it or move the branch decision out of it, so the
+forwarding pipeline keeps more of its clock gain.
+\item \emph{Instruction set.} Adding \texttt{jal}, \texttt{jalr} and byte and
+halfword loads will let us run compiled C programs instead of hand-written
+assembly.
+\item \emph{Hardware.} We will run the design on a real ECP5 board using the
+existing FPGA top level.
+\end{enumerate}
+Each change will be checked against the reference simulator and measured
+with the same CPI and Fmax flow, so its gain can be compared directly with
+the Phase I numbers.
