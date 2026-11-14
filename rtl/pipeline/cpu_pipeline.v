@@ -1,5 +1,6 @@
 // ABOUTME: 5-stage pipelined RV32I subset CPU (IF, ID, EX, MEM, WB) built from the stage modules.
 // ABOUTME: FORWARDING=1 forwards results and stalls only on load-use; 0 stalls on every RAW hazard.
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

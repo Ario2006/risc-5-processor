@@ -1,5 +1,6 @@
 // ABOUTME: Immediate generator: builds the sign extended I, S or B immediate from an instruction.
 // ABOUTME: The format is chosen from the opcode, so no extra control signal is needed.
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

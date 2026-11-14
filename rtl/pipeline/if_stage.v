@@ -1,5 +1,6 @@
 // ABOUTME: PC/IF stage: holds the program counter and fetches the instruction at it.
 // ABOUTME: The PC holds on a stall and jumps to the branch target when EX redirects it.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module if_stage #(

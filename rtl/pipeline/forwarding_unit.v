@@ -1,5 +1,6 @@
 // ABOUTME: Forwarding unit: sends a result still in EX/MEM or MEM/WB straight to the EX operands.
 // ABOUTME: The newest producer (EX/MEM) wins. ENABLE=0 turns forwarding off for the comparison.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module forwarding_unit #(

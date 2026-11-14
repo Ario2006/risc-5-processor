@@ -1,5 +1,6 @@
 // ABOUTME: EX/MEM pipeline register: ALU result, store data, destination and memory/WB control.
 // ABOUTME: Never stalls or flushes; anything that reaches EX/MEM will complete.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module ex_mem_reg (

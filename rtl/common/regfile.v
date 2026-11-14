@@ -1,5 +1,6 @@
 // ABOUTME: 32 x 32 register file with two read ports and one write port; x0 always reads 0.
 // ABOUTME: WRITE_THROUGH=1 returns the value being written this cycle (pipeline WB to ID bypass).
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module regfile #(

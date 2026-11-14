@@ -1,5 +1,6 @@
 // ABOUTME: Shared constants: RV32I opcodes used by this CPU and the ALU operation codes.
 // ABOUTME: Included by the control unit, ALU and both CPU tops.
+// Author: Sarvesh Srinath
 `ifndef RV_DEFS_VH
 `define RV_DEFS_VH
 
