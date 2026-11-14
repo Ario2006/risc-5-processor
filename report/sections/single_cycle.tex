@@ -1,13 +1,20 @@
-% ABOUTME: The instruction subset and the single-cycle datapath and control unit.
-% ABOUTME: Owner: Aryan (review against rtl/common and rtl/single_cycle, then defend in viva).
+% ABOUTME: The instruction subset, single-cycle datapath, control unit and timing analysis.
+% ABOUTME: Owner: Aryan (rewritten with architecture diagram and results-grounded timing).
 \section{Instruction Set and Single-Cycle Design}
 \label{sec:single}
 
 \subsection{Instruction subset}
-The brief suggests ADD, SUB, ADDI, LW, SW, BEQ and BNE. We add the logic,
-compare and shift instructions needed for realistic benchmarks such as
-sorting, 18 instructions in all (Table~\ref{tab:isa}). Memory accesses are
-aligned 32 bit words. \texttt{ecall} marks the end of a program.
+The assignment brief specifies a base set of seven instructions (\texttt{add},
+\texttt{sub}, \texttt{addi}, \texttt{lw}, \texttt{sw}, \texttt{beq} and
+\texttt{bne}). To run realistic benchmark programs such as bubble sort, array
+summation, and iterative Fibonacci generation, we expand this set to 18
+instructions (Table~\ref{tab:isa}). We include logical bitwise operations
+(\texttt{and}, \texttt{or}, \texttt{xor}), shifts (\texttt{sll},
+\texttt{slli}), signed comparisons (\texttt{slt}, \texttt{slti}), and
+arithmetic immediates (\texttt{addi}, \texttt{andi}, \texttt{ori},
+\texttt{xori}). Memory operations are restricted to aligned 32-bit words.
+Program termination is signalled cleanly by \texttt{ecall}, which stops the
+program counter and inhibits subsequent memory and register writes.
 
 \begin{table}[t]
 \centering
@@ -26,25 +33,59 @@ System & \texttt{ecall} (halt) \\
 \end{tabular}
 \end{table}
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{architecture_single.png}
+\caption{Single-cycle RV32I datapath with control signals and branch logic.
+The highlighted path from instruction fetch to register write-back represents
+the worst-case 17.0\,ns timing path.}
+\label{fig:arch_single}
+\end{figure}
+
 \subsection{Datapath}
-The datapath is built from shared modules in \texttt{rtl/common}: a 32 bit
-ALU with seven operations, a $32\times32$ register file with two
-asynchronous read ports and one synchronous write port (x0 always reads
-zero), an immediate generator for the I, S and B formats, and two 256 word
-memories. In the single-cycle CPU (\texttt{cpu\_single.v}) one instruction
-passes through all of them in one clock period: the PC addresses instruction
-memory, the fields address the register file, the ALU computes a result or an
-address, data memory is read or written, and the write-back mux returns the
-ALU result or the loaded word to the register file. A taken branch loads
-$\mathrm{PC}+\mathrm{imm}$ instead of $\mathrm{PC}+4$.
+The single-cycle processor (\texttt{cpu\_single.v}, Fig.~\ref{fig:arch_single})
+is constructed from modular blocks in \texttt{rtl/common}: a 32-bit ALU with
+seven operations, a $32\times32$ register file, an immediate generator, and
+two separate 256-word memories for instructions and data.
+
+Every instruction executes within a single clock cycle:
+\begin{enumerate}
+\item \textbf{Fetch:} The program counter addresses the instruction ROM
+(\texttt{imem.v}) to produce a 32-bit instruction word.
+\item \textbf{Decode:} The immediate generator (\texttt{imm\_gen.v}) reconstructs
+the 32-bit sign-extended immediate from the I, S, or B formats using opcode bits
+$6:0$. In parallel, the register file (\texttt{regfile.v}) asynchronously reads
+operands \texttt{rs1} and \texttt{rs2}. Register \texttt{x0} is hardwired to
+zero.
+\item \textbf{Execute:} A multiplexer selects between \texttt{rs2} and the
+immediate based on \texttt{ALUSrc}. The ALU evaluates the selected operation
+(\texttt{ALUOp}). In parallel, a dedicated comparator evaluates the branch
+condition \texttt{(rs1 == rs2) \textasciicircum{} branch\_ne}, while a dedicated
+branch adder computes the target address $\mathrm{PC} + \mathrm{imm}$. If the
+branch is taken, the next PC multiplexer selects the target address; otherwise,
+it selects $\mathrm{PC} + 4$.
+\item \textbf{Memory:} The ALU output provides the address for data memory
+(\texttt{dmem.v}). On stores (\texttt{sw}), \texttt{rs2} data is written to
+memory if the CPU is not halted.
+\item \textbf{Write-back:} The write-back multiplexer selects between the ALU
+output and memory read data based on \texttt{MemRd}, returning the result to
+the register file's synchronous write port at the next rising clock edge.
+\end{enumerate}
 
 \subsection{Control unit}
-The control unit (\texttt{control.v}) decodes the opcode, \texttt{funct3}
-and \texttt{funct7} into the signals of Table~\ref{tab:control}. It also
-reports whether the instruction really reads \texttt{rs1} and \texttt{rs2}.
-In an I-type instruction the \texttt{rs2} field holds immediate bits, and
-without this flag the pipeline's hazard unit would stall on registers the
-instruction never reads.
+The control unit (\texttt{control.v}) decodes opcode bits $6:0$,
+\texttt{funct3}, and \texttt{funct7} into the datapath control signals shown in
+Table~\ref{tab:control}. Because branches evaluate their condition with a
+dedicated equality comparator rather than subtracting in the ALU,
+\texttt{alu\_op} remains at its default \texttt{add} for branch instructions.
+
+A critical responsibility of \texttt{control.v} is asserting \texttt{uses\_rs1}
+and \texttt{uses\_rs2} only when an instruction genuinely reads those source
+registers. In I-type instructions, bits $24:20$ hold immediate bits rather than
+an \texttt{rs2} register address. Decoding \texttt{uses\_rs2} as 0 for I-type
+instructions ensures that the pipelined processor's hazard unit does not create
+false stalls when an earlier instruction writes to the register number
+coincidentally matching immediate bits $4:0$.
 
 \begin{table}[t]
 \centering
@@ -60,17 +101,30 @@ R-type & 1 & reg & 0 & 0 & 0 & funct \\
 I-type & 1 & imm & 0 & 0 & 0 & funct3 \\
 \texttt{lw} & 1 & imm & 1 & 0 & 0 & add \\
 \texttt{sw} & 0 & imm & 0 & 1 & 0 & add \\
-\texttt{beq}/\texttt{bne} & 0 & reg & 0 & 0 & 1 & compare \\
+\texttt{beq}/\texttt{bne} & 0 & reg & 0 & 0 & 1 & add \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Critical path}
-Place and route on the ECP5 (Section~\ref{sec:results}) reports a longest
-path of 17.0\,ns, or 58.75\,MHz. Because the instruction memory is a ROM built
-from logic, Yosys moves the PC register to the ROM's output, so the path starts
-with the instruction already in flip-flops. From there it runs through a
-register file read (2.1\,ns), the ALU computing the address (3.2\,ns), a read of
-the 256 word data memory (8.0\,ns, the largest share) and the write-back mux to
-the register file's write port (3.2\,ns, plus setup). Every instruction pays
-for this path, even an \texttt{addi} that never touches data memory.
+Synthesis and place-and-route on the Lattice ECP5 FPGA
+(Section~\ref{sec:results}) yield a median $F_{\max}$ of 58.75\,MHz across
+five placement seeds (ranging from 57.7 to 60.2\,MHz), giving a clock period of
+17.0\,ns.
+
+Static timing analysis in \texttt{results/synth\_runs.csv} identifies the
+worst-case path as starting at \texttt{immg.instr\_TRELLIS\_FF\_Q} and
+terminating at the register file RAM write port (\texttt{rf.regs}). Although
+\texttt{cpu\_single.v} reads instruction memory asynchronously from the PC,
+Yosys moves the PC flip-flops to the output of the distributed instruction ROM
+during synthesis, so the reported timing path begins at the instruction word.
+From these endpoints, the path matches the structure of a load word
+(\texttt{lw}) datapath: instruction decode, asynchronous register file read,
+ALU address calculation, data memory read latency, write-back multiplexing,
+and register file setup time.
+
+Every instruction in the single-cycle CPU must accommodate this entire 17.0\,ns
+period, even though arithmetic operations like \texttt{addi} or \texttt{add} do
+not access data memory and could safely execute at a higher frequency. This clock
+period overhead provides the primary motivation for slicing the datapath
+into our five-stage pipeline.
