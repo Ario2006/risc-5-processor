@@ -1,0 +1,12 @@
+# ABOUTME: Annotated Surfer capture view for forward.
+# ABOUTME: Load with build/hazard_demo.vcd after make demo.
+divider_add
+item_focus a
+item_rename EX/MEM_forwarding
+variable_add tb_cpu.clk
+variable_add tb_cpu.dut.ex_pc
+variable_add tb_cpu.dut.mem_pc
+variable_add tb_cpu.dut.mem_valid
+variable_add tb_cpu.dut.fwd_a
+variable_add tb_cpu.dut.fwd_b
+zoom_fit

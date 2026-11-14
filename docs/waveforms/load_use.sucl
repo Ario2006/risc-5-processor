@@ -1,0 +1,15 @@
+# ABOUTME: Annotated Surfer capture view for load_use.
+# ABOUTME: Load with build/hazard_demo.vcd after make demo.
+divider_add
+item_focus a
+item_rename load_use
+variable_add tb_cpu.clk
+variable_add tb_cpu.dut.if_pc
+variable_add tb_cpu.dut.id_pc
+variable_add tb_cpu.dut.id_valid
+variable_add tb_cpu.dut.ex_pc
+variable_add tb_cpu.dut.ex_valid
+variable_add tb_cpu.dut.stall
+variable_add tb_cpu.dut.wb_pc
+variable_add tb_cpu.dut.fwd_a
+zoom_fit

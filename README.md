@@ -46,7 +46,7 @@ sudo apt-get install iverilog
 # Windows without WSL: install Icarus from https://bleyer.org/icarus/ and tick "add to PATH"
 
 uv sync                                # Python tools, plus YoWASP yosys and nextpnr for synthesis
-make test                              # 229 tests, about 3 seconds
+make test                              # 239 tests, about 3 seconds
 ```
 
 No `make` on Windows? Run the commands inside `Makefile` by hand, for example

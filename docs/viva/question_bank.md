@@ -68,8 +68,8 @@ comparator there, on a longer path) or predict branches (project 5 territory).
 ## Verification
 
 **How do you know the CPU is correct?** A Python ISS is the reference. After every program we compare
-all 32 registers, all 256 data words and the instruction count. 9 directed tests, 5 benchmarks and 40
-constrained-random programs run on all three CPUs: 229 checks.
+all 32 registers, all 256 data words and the instruction count. 11 directed tests, 5 benchmarks and 40
+constrained-random programs run on all three CPUs: 239 checks.
 
 **Why constrained-random?** Hand-written tests only cover cases we thought of. Random programs on six
 registers create hazards at every distance with loads, stores and branches mixed in.
