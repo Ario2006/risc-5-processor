@@ -4,20 +4,21 @@
 \label{sec:results}
 
 \subsection{Setup}
-Synthesis uses Yosys \cite{yosys} (\texttt{synth\_ecp5}) and place and route
-uses nextpnr \cite{nextpnr} for a Lattice ECP5 LFE5U-25F, speed grade 6,
-package CABGA381 \cite{ecp5}, the FPGA on boards such as the ULX3S. Each CPU
-sits in a small top level that shows the last value written back on eight
-LEDs, so no logic can be optimised away, and runs the bubble sort program from
-its instruction ROM. nextpnr results depend on a random placement seed, so
-each design is placed with five seeds and we report the median.
+We synthesise each CPU with Yosys \cite{yosys} (\texttt{synth\_ecp5}) and
+place and route it with nextpnr \cite{nextpnr} for a Lattice ECP5 LFE5U-25F,
+speed grade 6, package CABGA381 \cite{ecp5}. This is the FPGA on boards like
+the ULX3S. Each CPU sits in a small top level that drives eight LEDs with the
+last value written back, so Yosys cannot optimise any logic away, and its
+instruction ROM holds the bubble sort program. Placement depends on a random
+seed, so we place every design with five seeds and report the median.
 
 \subsection{Synthesis}
-Table~\ref{tab:synth} gives the results. The pipeline registers add about
-260 flip-flops. Without forwarding the pipeline's clock is 1.94 times the
-single-cycle clock; with forwarding it is 1.43 times, because the forwarding
-comparators and muxes sit in front of the ALU and the branch comparator, on
-the path that ends in the flush of IF/ID and ID/EX.
+Table~\ref{tab:synth} gives the results. The pipeline registers cost about
+260 flip-flops (299 and 308, against 43). Without forwarding the pipeline
+clocks 1.94 times faster than the single-cycle CPU. With forwarding it is only
+1.43 times faster, because the forwarding comparators and muxes sit in front
+of the ALU and the branch comparator. That path ends in the flush of IF/ID and
+ID/EX, and it sets the clock.
 
 \begin{table}[t]
 \centering
@@ -37,15 +38,16 @@ Pipeline, fwd & 2765 & 308 & 83.89 & 83.6--86.9 \\
 \end{table}
 
 \textbf{Memory style matters.} When Yosys may use the FPGA's block RAM, it
-notices that each memory feeds a pipeline register and folds that register
-into the block RAM. This is legal and saves flip-flops, but an ECP5 block RAM
-has a 5.6\,ns clock-to-output delay, so the ID stage and the MEM/WB forwarding
-path then start with 5.6\,ns already spent. With block RAM the three designs
-reach only 42.2, 72.2 and 59.1\,MHz (Fig.~\ref{fig:fmax}). We therefore place
-both 256 word memories in LUTs, where every pipeline register stays a real
-flip-flop and the stage boundaries in the RTL are the stage boundaries in the
-hardware. Larger memories would need block RAM and an extra pipeline stage or a
-registered address, as real processors do.
+sees that each memory feeds a pipeline register and folds that register into
+the block RAM. That is legal and saves flip-flops. But the block RAM output
+now arrives after its clock-to-output delay instead of straight from a
+flip-flop, so the ID stage and the MEM/WB forwarding path start the cycle with
+that delay already spent. With block RAM the three designs reach only 42.2,
+72.2 and 59.1\,MHz (Fig.~\ref{fig:fmax}). So we keep both 256-word memories in
+LUTs. Every pipeline register then stays a real flip-flop, and the stage
+boundaries in the RTL are the stage boundaries in the hardware. Larger
+memories would need block RAM plus an extra pipeline stage or a registered
+address, which is what real processors do.
 
 \begin{figure}[t]
 \centering
@@ -57,14 +59,14 @@ registered address, as real processors do.
 \subsection{CPI and IPC}
 Table~\ref{tab:cpi} lists CPI and IPC for every benchmark. The single-cycle
 CPU has CPI 1.00 by construction. Fig.~\ref{fig:breakdown} splits each
-pipelined CPI with (\ref{eq:cycles}). Without forwarding, data hazard stalls
-dominate: \texttt{dep\_chain}, where each instruction needs the one before
-it, stalls for 241 cycles over 163 instructions. Forwarding removes every
-one of those stalls; what remains are load-use stalls (66 in bubble sort, one
-per inner iteration, and 16 in the array sum) and branch flushes. Every loop
-iteration ends in a taken branch, so with loop bodies of six to ten
-instructions the flushes alone add 0.23 to 0.35 to CPI. The four fill cycles
-are negligible for programs of 86 instructions or more.
+pipelined CPI using (\ref{eq:cycles}). Without forwarding, data hazard stalls
+dominate. In \texttt{dep\_chain} every instruction needs the one before it, and
+it stalls for 241 cycles over 163 instructions. Forwarding removes all of
+those stalls. What is left are load-use stalls (66 in bubble sort, one per
+inner iteration, and 16 in the array sum) and branch flushes. Every loop
+iteration ends in a taken branch, and the loop bodies are six to ten
+instructions long, so the flushes alone add 0.23 to 0.35 to CPI. The four fill
+cycles do not matter for programs of 86 instructions or more.
 
 \begin{table}[t]
 \centering
@@ -94,17 +96,19 @@ data hazard stalls and taken branch flushes, per benchmark.}
 \end{figure*}
 
 \subsection{Execution time}
-Combining cycles with Fmax gives execution time and the speedup over the
-single-cycle CPU (Fig.~\ref{fig:speedup}). Equation (\ref{eq:speedup}) makes
-the outcome predictable: the forwarding pipeline wins only when its CPI is
-below 1.43, and the pipeline without forwarding only when its CPI is below
-1.94. With forwarding, \texttt{dep\_chain}, \texttt{fibonacci} and
-\texttt{indep\_ops} (CPI 1.26 to 1.29) run 1.11 to 1.14 times faster, while
-bubble sort and the array sum (CPI 1.45 and 1.58) run slightly slower. The
-pipeline without forwarding has the best clock and wins on code with few
-dependences (\texttt{indep\_ops}, 1.29 times), but loses badly on dependent
-chains (0.71 times). Forwarding therefore trades a 26\,\% slower clock for a
-much more predictable CPI: its worst case is 0.90, against 0.71 without it.
+Cycles divided by Fmax gives execution time and the speedup over the
+single-cycle CPU (Fig.~\ref{fig:speedup}). Equation (\ref{eq:speedup})
+predicts the outcome: the forwarding pipeline wins only when its CPI is below
+1.43, and the pipeline without forwarding only when its CPI is below 1.94.
+With forwarding, \texttt{dep\_chain}, \texttt{fibonacci} and
+\texttt{indep\_ops} (CPI 1.26 to 1.29) run 1.11 to 1.14 times faster. Bubble
+sort and the array sum (CPI 1.45 and 1.58) run slightly slower. The pipeline
+without forwarding has the fastest clock, so it wins on code with few
+dependences: \texttt{indep\_ops} runs 1.29 times faster, and
+\texttt{fibonacci} 1.14 times, just ahead of the forwarding pipeline's 1.11.
+On dependent chains it loses badly (0.71 times). So forwarding trades a
+26\,\% slower clock for a much steadier CPI. Its worst case is 0.90, against
+0.71 without it.
 
 \begin{figure}[t]
 \centering
@@ -116,13 +120,13 @@ Fmax). Above 1 the pipeline is faster.}
 
 \subsection{Why not five times faster}
 An ideal five-stage pipeline would have a clock five times faster and
-CPI 1. Ours falls short on both counts. First, the stages are not balanced:
-the data memory read alone takes 8.0 of the single-cycle CPU's 17.0\,ns, and
-EX holds the ALU, the forwarding muxes and the branch decision, so the
-longest stage is about half of the single-cycle path, not a fifth. Second,
-the branch penalty of two cycles per loop iteration costs a quarter to a
-third of a cycle per instruction. The clearest next steps are therefore a
-branch predictor or resolving branches in ID (one cycle penalty instead of
-two), and rebalancing the slowest stages: EX, whose ALU and forwarding path
-set the clock in both pipelines, and MEM, whose 8\,ns memory read is close
-behind.
+CPI 1. Ours misses on both. First, the stages are not balanced. The
+single-cycle clock period is 17.0\,ns, the pipeline without forwarding runs at
+8.8\,ns and the forwarding pipeline at 11.9\,ns. So the longest stage is about
+half of the single-cycle path, not a fifth. In both pipelines that stage is
+EX, which holds the ALU and, with forwarding, the forwarding muxes and the
+branch decision as well. Second, the two-cycle branch penalty on every loop
+iteration costs a quarter to a third of a cycle per instruction. The clearest
+next steps are a branch predictor or resolving branches in ID (a one-cycle
+penalty instead of two), and splitting EX, which sets the clock in both
+pipelines.
