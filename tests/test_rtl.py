@@ -60,3 +60,18 @@ def test_forwarding_removes_alu_stalls():
 def test_taken_branches_flush_two_slots():
     res = simulate(load("branches"), "pipe_fwd", "br")
     assert res.flushes == 5  # jumps to t1 to t5 are taken; the bne to bad is not
+
+
+@pytest.mark.parametrize("config", CONFIGS)
+@pytest.mark.parametrize("name,registers,memory", [
+    ("store_load_same_address", {3: 55, 5: 0xfffffff9, 6: 48}, {4: 0xfffffff9, 5: 48}),
+    ("consecutive_loads_same_rd", {1: 29, 2: 58, 3: 0xfffffffb, 4: 0xfffffffc,
+                                   7: 29, 8: 58}, {3: 58, 4: 0xfffffffc, 5: 58}),
+    ("branches", {5: 7, 10: 0, 11: 0, 12: 0, 13: 0, 14: 0, 15: 0, 16: 42}, {0: 0}),
+])
+def test_directed_hand_calculated_outcomes(config, name, registers, memory):
+    result = check(load(name), config, f"expected_{name}")
+    for index, expected in registers.items():
+        assert result.regs[index] == expected, f"x{index}"
+    for index, expected in memory.items():
+        assert result.dmem[index] == expected, f"memory word {index}"

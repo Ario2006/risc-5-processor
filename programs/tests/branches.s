@@ -17,6 +17,8 @@ t3:     beq  x0, x0, t4        # back-to-back branches
 t4:     beq  x0, x0, t5
         addi x14, x0, 1
 t5:     addi x5, x0, 7
+        beq  x1, x5, bad       # not taken: 3 != 7
+        addi x16, x0, 42       # proves the unequal BEQ fell through
         ecall
 bad:    addi x15, x0, 1
         ecall

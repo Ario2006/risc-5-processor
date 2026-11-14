@@ -35,13 +35,16 @@ also creates a load-use dependency.
 `consecutive_loads_same_rd.s`: initial words are 11, 29 and -5. Two loads write
 x1 consecutively, then add x1 to itself. x1 must end as 29 and x2 as 58, also
 stored at address 12. A second pair writes x3, followed by addi; x3 must be
-0xfffffffb and x4 0xfffffffc, also stored at address 16. Forwarding an older load
-rather than the latest writer gives a different final state. Distinct source
+0xfffffffb and x4 0xfffffffc, also stored at address 16. These load-use pairs test recovery after the stall, not competing forwarding sources.
+The added `lw x7; addi x7,x0,29; add x8,x7,x7` sequence places the older
+value 11 in MEM/WB and the newer value 29 in EX/MEM simultaneously. x8 and
+memory at byte address 20 must be 58. Reversing either operand's priority
+produces 40 instead; both mutations were detected. Distinct source
 values are essential: equal values would hide the bug.
 
 The suite finds both files automatically and compares each on all CPUs. It also
 checks the cycle identity for both pipeline modes. On this machine the complete
-suite passed with 239 tests; `make lint` passed too.
+suite passed with 248 tests; `make lint` passed too.
 
 ## Walk through the captured hazard demo
 
@@ -88,3 +91,15 @@ the project changed that combinational logic to always @(*).
 **Why not just inspect a waveform?** Waveforms explain the timing of a chosen run.
 The ISS comparisons automate architectural checks across many runs. We need both
 a repeatable check and a way to diagnose why it failed.
+
+## Review additions to rehearse
+
+- Explain why the consecutive-load pair inserts a bubble, but the added load/ALU
+  overwrite sequence makes both forwarding sources compete.
+- Explain the new unequal BEQ: x1=3, x5=7, so x16 becomes 42 and x15 stays zero.
+- Point to the labeled 55/65/75 ns boundaries. During 65–75 ns, fwd_a=2 is harmless:
+  EX is invalid and its write/store/branch controls are cleared.
+- Known follow-ups: observe activity after halt, reject incomplete state dumps,
+  and support long simulator file paths. Current passing tests do not resolve these.
+
+These revised examples still need personal rehearsal.

@@ -12,4 +12,11 @@ variable_add tb_cpu.dut.ex_valid
 variable_add tb_cpu.dut.flush
 variable_add tb_cpu.dut.fwd_a
 variable_add tb_cpu.dut.fwd_b
+theme_select light+
 zoom_fit
+zoom_in
+zoom_in
+goto_time 92500
+marker_set 85ns_flush 85000
+marker_set 95ns_redirect 95000
+item_unfocus

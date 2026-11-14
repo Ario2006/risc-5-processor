@@ -17,7 +17,7 @@ clock frequency x IPC, in instructions per second.
 
 **Why 4 extra cycles at the start?** The first instruction needs 5 cycles to reach WB; after that
 one finishes per cycle. Cycles = N + 4 + stalls + 2 x taken branches, and our tests check this on
-every program.
+every directed program and benchmark in both pipeline modes.
 
 ## Our design
 
@@ -69,7 +69,7 @@ comparator there, on a longer path) or predict branches (project 5 territory).
 
 **How do you know the CPU is correct?** A Python ISS is the reference. After every program we compare
 all 32 registers, all 256 data words and the instruction count. 11 directed tests, 5 benchmarks and 40
-constrained-random programs run on all three CPUs: 239 checks.
+constrained-random programs run on all three CPUs: 248 checks.
 
 **Why constrained-random?** Hand-written tests only cover cases we thought of. Random programs on six
 registers create hazards at every distance with loads, stores and branches mixed in.

@@ -4,9 +4,17 @@ divider_add
 item_focus a
 item_rename EX/MEM_forwarding
 variable_add tb_cpu.clk
+variable_add tb_cpu.dut.ex_valid
 variable_add tb_cpu.dut.ex_pc
 variable_add tb_cpu.dut.mem_pc
 variable_add tb_cpu.dut.mem_valid
 variable_add tb_cpu.dut.fwd_a
 variable_add tb_cpu.dut.fwd_b
+theme_select light+
 zoom_fit
+zoom_in
+zoom_in
+goto_time 50000
+marker_set 45ns_EXMEM 45000
+marker_set 55ns_end 55000
+item_unfocus
