@@ -90,16 +90,16 @@ placement seeds.
 mux, branch comparator, taken signal, flush of the pipeline registers. Without forwarding, the
 compare and mux are not on that path.
 
-**Why is the pipeline not 5 times faster?** Unbalanced stages: the data memory read alone is 8 of the
-single-cycle 17 ns, and EX holds the ALU plus forwarding plus branch decision, so the longest stage is
-about half the single-cycle path. And every loop iteration pays a 2 cycle branch penalty.
+**Why is the pipeline not 5 times faster?** Unbalanced stages: the longest stage (EX) takes 8.8 ns
+without forwarding and 11.9 ns with it, against the single-cycle 17.0 ns, so about half the
+single-cycle path, not a fifth. And every loop iteration pays a 2 cycle branch penalty.
 
 **When does the pipeline actually win?** With forwarding, when CPI is below 1.43 (the clock ratio).
 dep_chain, fibonacci, indep_ops (CPI about 1.26 to 1.29) win by 1.11 to 1.14x. bubble_sort (1.45) and
 sum_array (1.58) lose slightly.
 
 **Why did you not use block RAM?** Yosys folded our pipeline registers into the block RAMs (legal,
-saves flip-flops), but block RAM has a 5.6 ns clock-to-output, which then starts the ID stage and the
+saves flip-flops), but then the block RAM's clock-to-output delay starts the ID stage and the
 forwarding path. With LUT memories every pipeline register stays a real flip-flop. Block RAM numbers
 are in the report for comparison.
 
