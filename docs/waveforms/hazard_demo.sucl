@@ -1,0 +1,17 @@
+# ABOUTME: Surfer view for the forwarding, load-use stall and branch flush in the hazard demo.
+# ABOUTME: Run after make demo with surfer build/hazard_demo.vcd -c docs/waveforms/hazard_demo.sucl.
+variable_add tb_cpu.clk
+variable_add tb_cpu.dut.if_pc
+variable_add tb_cpu.dut.id_pc
+variable_add tb_cpu.dut.id_valid
+variable_add tb_cpu.dut.ex_pc
+variable_add tb_cpu.dut.ex_valid
+variable_add tb_cpu.dut.mem_pc
+variable_add tb_cpu.dut.mem_valid
+variable_add tb_cpu.dut.wb_pc
+variable_add tb_cpu.dut.wb_valid
+variable_add tb_cpu.dut.fwd_a
+variable_add tb_cpu.dut.fwd_b
+variable_add tb_cpu.dut.stall
+variable_add tb_cpu.dut.flush
+zoom_fit

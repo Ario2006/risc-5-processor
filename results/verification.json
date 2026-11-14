@@ -1,0 +1,72 @@
+{
+  "tests": 248,
+  "directed_programs": 11,
+  "benchmarks": 5,
+  "random_seeds": 40,
+  "mutations": [
+    {
+      "mutation": "priority_rs1",
+      "program": "consecutive_loads_same_rd",
+      "exit_code": 1,
+      "diagnostic": "consecutive_loads_same_rd on pipe_fwd disagrees with the ISS:\n  x8: rtl 0x00000028 iss 0x0000003a\n  mem[5]: rtl 0x00000028 iss 0x0000003a"
+    },
+    {
+      "mutation": "priority_rs2",
+      "program": "consecutive_loads_same_rd",
+      "exit_code": 1,
+      "diagnostic": "consecutive_loads_same_rd on pipe_fwd disagrees with the ISS:\n  x8: rtl 0x00000028 iss 0x0000003a\n  mem[5]: rtl 0x00000028 iss 0x0000003a"
+    },
+    {
+      "mutation": "ignore_rs2_load_use",
+      "program": "store_load_same_address",
+      "exit_code": 1,
+      "diagnostic": "store_load_same_address on pipe_fwd disagrees with the ISS:\n  x6: rtl 0x00000047 iss 0x00000030\n  mem[5]: rtl 0x00000047 iss 0x00000030"
+    },
+    {
+      "mutation": "no_memwb_rs2",
+      "program": "store_load_same_address",
+      "exit_code": 1,
+      "diagnostic": "store_load_same_address on pipe_fwd disagrees with the ISS:\n  x6: rtl 0x00000037 iss 0x00000030\n  mem[5]: rtl 0x00000037 iss 0x00000030"
+    },
+    {
+      "mutation": "beq_always_taken",
+      "program": "branches",
+      "exit_code": 1,
+      "diagnostic": "branches on pipe_fwd disagrees with the ISS:\n  x15: rtl 0x00000001 iss 0x00000000\n  x16: rtl 0x00000000 iss 0x0000002a"
+    }
+  ],
+  "test_command": "make test",
+  "test_result": "248 passed in 2.44s",
+  "lint": "All checks passed!",
+  "demo": {
+    "cycles": 14,
+    "instret": 7,
+    "stalls": 1,
+    "flushes": 1
+  },
+  "tools": {
+    "surfer": "0.7.0",
+    "icarus": "13.0"
+  },
+  "waveform_windows_ns": {
+    "forward": [
+      33,
+      67
+    ],
+    "load_use": [
+      43,
+      92
+    ],
+    "branch_flush": [
+      73,
+      112
+    ]
+  },
+  "deferred": [
+    "post-halt monitoring",
+    "strict dump completeness validation",
+    "long file paths in testbench and memory loaders"
+  ],
+  "report_build": "Tectonic succeeded; underfull-box spacing warnings only",
+  "provenance": "Manually collected validation record. Mutation experiments were run separately using a temporary script and isolated RTL copies; no checked-in command regenerates this file, and make test does not run these mutations."
+}

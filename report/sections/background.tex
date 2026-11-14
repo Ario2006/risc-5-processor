@@ -34,7 +34,7 @@ a taken branch discards the two younger instructions already fetched. So
 C = N + 4 + \text{stalls} + 2 \cdot \text{taken branches}.
 \label{eq:cycles}
 \end{equation}
-Our test suite checks this identity on every program.
+Our test suite checks this identity on every directed program and benchmark in both pipeline modes.
 
 \subsection{Hazards}
 \emph{Structural hazards} arise when two stages need one resource. Separate

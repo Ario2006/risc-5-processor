@@ -24,8 +24,8 @@ We design a single-cycle processor for an 18 instruction subset of RV32I in
 Verilog, verify it, and partition the same datapath into the classic
 five-stage pipeline (IF, ID, EX, MEM, WB) with pipeline registers, a hazard
 unit and a forwarding unit. Every design is checked against a Python
-instruction set simulator on 9 directed hazard tests, 5 benchmarks and 40
-constrained-random programs, 229 automated checks in all. On a Lattice ECP5
+instruction set simulator on 11 directed hazard tests, 5 benchmarks and 40
+constrained-random programs, 248 automated checks in all. On a Lattice ECP5
 FPGA the pipeline raises the maximum clock from 58.8 MHz to 113.9 MHz
 without forwarding and to 83.9 MHz with it. Without forwarding, CPI ranges
 from 1.51 to 2.74; forwarding removes every arithmetic stall and brings CPI to
@@ -46,6 +46,8 @@ RISC-V, pipelining, hazards, forwarding, CPI, FPGA, Verilog
 \input{sections/single_cycle}
 \input{sections/pipeline}
 \input{sections/verification}
+% Keep the verification evidence before Results, including full-width floats.
+\clearpage
 \input{sections/results}
 \input{sections/conclusion}
 \input{sections/contributions}
