@@ -23,21 +23,22 @@ NST, Rishihood University}}
 \maketitle
 
 \begin{abstract}
-We design a single-cycle processor for an 18 instruction subset of RV32I in
-Verilog, verify it, and partition the same datapath into the classic
-five-stage pipeline (IF, ID, EX, MEM, WB) with pipeline registers, a hazard
-unit and a forwarding unit. Every design is checked against a Python
-instruction set simulator on 11 directed hazard tests, 5 benchmarks and 40
-constrained-random programs, 248 automated checks in all. On a Lattice ECP5
-FPGA the pipeline raises the maximum clock from 58.8 MHz to 113.9 MHz
-without forwarding and to 83.9 MHz with it. Without forwarding, CPI ranges
-from 1.51 to 2.74; forwarding removes every arithmetic stall and brings CPI to
-1.26 to 1.58. Because every taken branch costs two cycles and our loops end
-in one, the net execution time speedup over the single-cycle design is
-0.90 to 1.14 with forwarding and 0.71 to 1.29 without. The iron law of
-performance explains every result: with forwarding the pipeline wins only
-when its CPI stays below the clock ratio of 1.43. We trace each lost cycle
-to its cause and each nanosecond of the critical path to its stage.
+We design a single-cycle processor for an 18-instruction subset of RV32I in
+Verilog and split the same datapath into the classic five-stage pipeline
+(IF, ID, EX, MEM, WB), with pipeline registers, a hazard unit and a
+forwarding unit that can be switched off. All three designs are checked
+against a Python instruction set simulator on 11 directed hazard tests, 5
+benchmarks and 40 constrained-random programs, 248 automated checks in all.
+On a Lattice ECP5 FPGA, pipelining raises the maximum clock from 58.75\,MHz
+to 113.86\,MHz without forwarding and to 83.89\,MHz with it. CPI rises to
+1.51 to 2.74 without forwarding and 1.26 to 1.58 with it: forwarding removes
+every arithmetic stall, but not the load-use stall or the two-cycle penalty
+of each taken branch. The net execution time speedup over the single-cycle
+design is therefore only 0.71 to 1.29 without forwarding and 0.90 to 1.14
+with it. The iron law of performance explains every result: with forwarding,
+the pipeline wins only when its CPI stays below the clock ratio of 1.43. We
+trace each lost cycle to its cause and propose branch prediction and a better
+balanced EX stage for Phase II.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -49,8 +50,6 @@ RISC-V, pipelining, hazards, forwarding, CPI, FPGA, Verilog
 \input{sections/single_cycle}
 \input{sections/pipeline}
 \input{sections/verification}
-% Keep the verification evidence before Results, including full-width floats.
-\clearpage
 \input{sections/results}
 \input{sections/conclusion}
 \input{sections/contributions}

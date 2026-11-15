@@ -1,7 +1,32 @@
-% ABOUTME: Background: CPI, IPC, throughput, the iron law, and the three kinds of hazard.
-% ABOUTME: Owner: Navodit (review and extend with more related work if time allows).
-\section{Background}
+% ABOUTME: Literature review (prior pipelines, open RISC-V cores, branch handling) and background.
+% ABOUTME: Owner: Navodit. Background covers CPI, IPC, the iron law and the three kinds of hazard.
+\section{Literature Review and Background}
 \label{sec:background}
+
+\subsection{Pipelined processors}
+The Stanford MIPS processor \cite{hennessy1982} showed that a simple
+load/store instruction set lets a single chip run a five-stage pipeline at a
+high clock. MIPS left hazards to the compiler; our design, like later ones,
+detects them in hardware. Our five stages, forwarding unit, load-use stall and
+branch flush follow Patterson and Hennessy \cite{patterson2021}, and the iron
+law we use to explain every result is from Hennessy and Patterson
+\cite{hennessy2019}.
+
+\subsection{RISC-V and open-source cores}
+RISC-V is a free and open instruction set from UC Berkeley; Asanovi\'c and
+Patterson \cite{asanovic2014} argue that a free ISA lets anyone build and
+share implementations. PicoRV32 \cite{picorv32} is optimised for size and
+clock speed and needs several cycles per instruction (an average CPI of about
+4.1 on Dhrystone). Ibex \cite{ibex} has two stages, fetch and a combined
+decode and execute. Rocket \cite{rocketchip} has five in-order stages like
+ours, plus caches and branch prediction, and has booted Linux on fabricated
+chips. Ours has the five stages with none of the extras, so the cost of each
+hazard can be measured on its own.
+
+\subsection{Branch handling}
+Smith \cite{smith1981} showed that dynamic branch prediction, which learns
+from each branch's history, beats fixed rules. We use the simplest fixed
+rule, predict not taken, and Section~\ref{sec:results} measures its cost.
 
 \subsection{Performance measures}
 For a program of $N$ instructions that takes $C$ clock cycles at clock
