@@ -122,8 +122,9 @@ Fmax). Above 1 the pipeline is faster.}
 An ideal five-stage pipeline would have a clock five times faster and
 CPI 1. Ours misses on both. First, the stages are not balanced. The
 single-cycle clock period is 17.0\,ns, the pipeline without forwarding runs at
-8.8\,ns and the forwarding pipeline at 11.9\,ns. So the longest stage is about
-half of the single-cycle path, not a fifth. In both pipelines that stage is
+8.8\,ns and the forwarding pipeline at 11.9\,ns. So the longest stage takes
+52\,\% of the single-cycle path without forwarding and 70\,\% with it, far
+from a fifth. In both pipelines that stage is
 EX, which holds the ALU and, with forwarding, the forwarding muxes and the
 branch decision as well. Second, the two-cycle branch penalty on every loop
 iteration costs a quarter to a third of a cycle per instruction. The clearest
