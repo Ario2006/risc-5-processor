@@ -1,5 +1,5 @@
-# ABOUTME: CI: lint the Python tools and run every test (assembler, ISS and all RTL simulations).
-# ABOUTME: Synthesis is not run here; it is slow and its numbers live in results/.
+# ABOUTME: CI: lint the Python tools, run every test (assembler, ISS and all RTL simulations) and build the report.
+# ABOUTME: The report job fails on any LaTeX error or undefined reference; synthesis is not run here, its numbers live in results/.
 name: ci
 on:
   pull_request:
@@ -15,3 +15,21 @@ jobs:
       - run: uv sync --locked
       - run: uv run ruff check .
       - run: uv run pytest -q
+  report:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: report
+    env:
+      TEXINPUTS: ".:../figures:"
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-latex-base texlive-latex-recommended texlive-publishers texlive-fonts-recommended
+      - name: Build report/main.tex into report/build/
+        run: |
+          mkdir -p build
+          pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build main.tex
+          bibtex build/main
+          pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build main.tex
+          pdflatex -interaction=nonstopmode -halt-on-error -output-directory=build main.tex
+          if grep -n undefined build/main.log; then exit 1; fi
