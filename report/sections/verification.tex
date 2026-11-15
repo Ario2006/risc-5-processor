@@ -3,29 +3,21 @@
 \section{Verification}
 \label{sec:verification}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{waveform_hazard_demo.png}
-\caption{Waveform of the same run: PC in each stage (\texttt{-} is a bubble),
-stall, flush, forwarding selects and write back.}
-\label{fig:wave}
-\end{figure}
-
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.95\textwidth]{waveform_forward_annotated.png}
+\includegraphics[width=0.9\textwidth]{waveform_forward_annotated.png}
 \caption{EX/MEM forwarding in Surfer. With EX PC 0x04 and MEM PC 0x00,
 \texttt{fwd\_a=fwd\_b=2}: both operands of the add use the preceding
 instruction's result. Selector 1 denotes MEM/WB; selector 0 uses the register operand.}
 \label{fig:forward-capture}
 \medskip
-\includegraphics[width=0.95\textwidth]{waveform_load_use_annotated.png}
+\includegraphics[width=0.9\textwidth]{waveform_load_use_annotated.png}
 \caption{Load-use stall in Surfer. While \texttt{stall} is high, IF PC 0x10
 and ID PC 0x0c are held. EX becomes invalid on the next edge; when the add
 executes, \texttt{fwd\_a=1} supplies the load result from MEM/WB.}
 \label{fig:stall-capture}
 \medskip
-\includegraphics[width=0.95\textwidth]{waveform_branch_flush_annotated.png}
+\includegraphics[width=0.9\textwidth]{waveform_branch_flush_annotated.png}
 \caption{Branch flush in Surfer. The branch at EX PC 0x10 asserts
 \texttt{flush}; the next edge clears ID and EX valid and redirects IF to
 0x1c. The wrong-path instructions at 0x14 and 0x18 cannot commit.}
@@ -124,6 +116,14 @@ cleared, this selection has no architectural effect.
 \caption{Pipeline diagram of the hazard demo on the forwarding pipeline,
 drawn from the RTL trace. Yellow: load-use stall. Red: flushed.}
 \label{fig:diagram}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{waveform_hazard_demo.png}
+\caption{Waveform of the same run: PC in each stage (\texttt{-} is a bubble),
+stall, flush, forwarding selects and write back.}
+\label{fig:wave}
 \end{figure}
 
 \subsection{Bugs the flow caught}
