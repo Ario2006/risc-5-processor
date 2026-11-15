@@ -16,8 +16,8 @@ Same rules as our T081 repo. Read this once before your first pull request.
 ## First time setup
 
 ```sh
-git clone <repo url>
-cd mca-riscv-pipeline
+git clone https://github.com/Ario2006/risc-5-processor.git
+cd risc-5-processor
 uv sync
 make test          # needs Icarus Verilog, see README, section Setup
 ```
