@@ -60,13 +60,13 @@ Cycle count: `C = N + 4 + stalls + 2 x taken branches`.
 
 ## Literature review: one line per reference
 
-- **MIPS (Hennessy et al., 1982):** "Microprocessor without Interlocked Pipeline Stages". The
+- **MIPS (Hennessy et al., 1982):** "Microprocessor without Interlocked Pipe Stages". The
   compiler had to avoid hazards. We detect them in hardware with a hazard unit instead.
 - **Patterson and Hennessy:** the textbook 5-stage pipeline, forwarding unit and load-use stall.
   Our design follows it.
 - **Hennessy and Patterson:** the iron law we use for every result.
 - **Asanovic and Patterson (2014):** the case for a free, open ISA. RISC-V came from Berkeley.
-- **PicoRV32:** size-optimised, high clock, but about 4 cycles per instruction (CPI about 4.2
+- **PicoRV32:** size-optimised, high clock, but about 4 cycles per instruction (CPI about 4.1
   on Dhrystone). Not a classic pipeline.
 - **Ibex (lowRISC):** 2-stage pipeline, fetch then combined decode and execute.
 - **Rocket (Berkeley):** 5-stage in-order like ours, plus caches and branch prediction; has been
@@ -89,8 +89,10 @@ Every item fixes a loss we measured.
      counter learns "taken" and mispredicts about once per loop. It takes two wrong guesses
      in a row to flip the prediction.
    - Branch target buffer: remembers the target, so IF can jump in the same cycle.
-2. **Stage balance.** EX is the longest stage in both pipelines: 8.8 ns and 11.9 ns, against
-   17.0 ns for the whole single-cycle path. Split it or move the branch decision out.
+2. **Stage balance.** The critical path, set by EX and the branch decision, is 8.8 ns without
+   forwarding and 11.9 ns with it: 52% and 70% of the 17.0 ns single-cycle path, not 20%.
+   These are 1 / Fmax, the whole critical path, not a pure EX delay. Split EX or move the
+   branch decision out.
 3. **Instruction set.** `jal` and `jalr` are needed for function calls, and byte and halfword
    loads for C strings and chars. Then we can run compiled C, not just hand-written assembly.
 4. **Hardware.** Run `synth/fpga_top.v` on a real ECP5 board.
