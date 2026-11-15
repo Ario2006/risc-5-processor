@@ -1,5 +1,6 @@
 // ABOUTME: Control unit: decodes opcode, funct3 and funct7 into datapath control signals.
 // ABOUTME: Also reports which source registers an instruction really reads, for hazard checks.
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

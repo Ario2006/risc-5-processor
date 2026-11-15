@@ -1,5 +1,6 @@
 // ABOUTME: ID/EX pipeline register: operands, immediate, register numbers and control for EX onward.
 // ABOUTME: flush inserts a bubble by clearing valid and control only; a bubble's data is never used.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module id_ex_reg (

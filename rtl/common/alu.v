@@ -1,5 +1,6 @@
 // ABOUTME: 32 bit ALU for the supported subset: add, sub, and, or, xor, set less than, shift left.
 // ABOUTME: Purely combinational, shared by the single-cycle and pipelined CPUs.
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

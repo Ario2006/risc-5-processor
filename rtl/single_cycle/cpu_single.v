@@ -1,5 +1,6 @@
 // ABOUTME: Single-cycle RV32I subset CPU: every instruction finishes in one long clock cycle.
 // ABOUTME: The baseline the pipelined CPU is compared with (CPI exactly 1, lowest clock).
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

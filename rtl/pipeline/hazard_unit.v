@@ -1,5 +1,6 @@
 // ABOUTME: Hazard unit: stalls on data hazards, flushes on taken branches, stops fetch at ecall.
 // ABOUTME: With forwarding only a load-use stalls; without it every RAW on EX or MEM stalls.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module hazard_unit #(

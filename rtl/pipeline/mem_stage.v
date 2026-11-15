@@ -1,5 +1,6 @@
 // ABOUTME: Memory/MEM stage: the data memory, read by loads and written by stores.
 // ABOUTME: The ALU result is the byte address; only aligned word access is supported.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module mem_stage #(

@@ -36,7 +36,7 @@ module tb_cpu;
     integer cycles = 0, instret = 0, stalls = 0, load_use = 0, flushes = 0;
     integer max_cycles = 200000;
     integer trace_fd = 0, i, fd;
-    reg [1023:0] path;
+    reg [8*1024-1:0] path;
     reg running = 1'b0;
 
     initial begin
