@@ -91,8 +91,8 @@ mux, branch comparator, taken signal, flush of the pipeline registers. Without f
 compare and mux are not on that path.
 
 **Why is the pipeline not 5 times faster?** Unbalanced stages: the longest stage (EX) takes 8.8 ns
-without forwarding and 11.9 ns with it, against the single-cycle 17.0 ns, so about half the
-single-cycle path, not a fifth. And every loop iteration pays a 2 cycle branch penalty.
+without forwarding and 11.9 ns with it, against the single-cycle 17.0 ns: 52% and 70% of the
+single-cycle path, far from a fifth. And every loop iteration pays a 2 cycle branch penalty.
 
 **When does the pipeline actually win?** With forwarding, when CPI is below 1.43 (the clock ratio).
 dep_chain, fibonacci, indep_ops (CPI about 1.26 to 1.29) win by 1.11 to 1.14x. bubble_sort (1.45) and

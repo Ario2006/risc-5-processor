@@ -1,5 +1,6 @@
 // ABOUTME: MEM/WB pipeline register: ALU result, loaded data, destination and write-back control.
 // ABOUTME: Never stalls or flushes.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module mem_wb_reg (

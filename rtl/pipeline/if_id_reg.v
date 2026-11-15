@@ -1,5 +1,6 @@
 // ABOUTME: IF/ID pipeline register: the fetched instruction and its PC.
 // ABOUTME: en=0 holds it (stall); flush clears valid, which turns it into a bubble.
+// Author: Sarvesh Srinath
 `default_nettype none
 `include "defs.vh"
 

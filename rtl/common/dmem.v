@@ -1,5 +1,6 @@
 // ABOUTME: Data memory (RAM), word addressed, asynchronous read and synchronous write.
 // ABOUTME: Loaded from INIT_FILE, or in simulation from the +dmem=<file> plusarg.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module dmem #(
@@ -29,7 +30,7 @@ module dmem #(
         for (i = 0; i < DEPTH; i = i + 1) mem[i] = 32'b0;
         if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
         begin : plusarg_load
-            reg [1023:0] file;
+            reg [8*1024-1:0] file;
             if ($value$plusargs("dmem=%s", file)) $readmemh(file, mem);
         end
 `endif

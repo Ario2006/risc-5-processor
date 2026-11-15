@@ -49,8 +49,8 @@ whether to flush. Without forwarding they aren't on that path, so that clock is 
 
 ## Why not 5x faster
 
-1. Stages aren't balanced. The longest stage is 8.8 ns of a 17.0 ns path, about half, not a
-   fifth. It's EX in both pipelines.
+1. Stages aren't balanced. The longest stage is 8.8 ns of a 17.0 ns path without forwarding
+   (52%) and 11.9 ns with it (70%), far from a fifth. It's EX in both pipelines.
 2. Branches cost 2 cycles each, and every loop iteration ends in one. That adds 0.23 to 0.35
    to CPI on its own (bubble sort: 196 flush cycles / 591 instructions = 0.33).
 

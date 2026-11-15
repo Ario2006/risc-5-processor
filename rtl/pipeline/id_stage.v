@@ -1,5 +1,6 @@
 // ABOUTME: Decode/Register File stage: control unit, immediate generator and register file.
 // ABOUTME: WB writes the register file here; write-through lets ID read a value written this cycle.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module id_stage (

@@ -1,5 +1,6 @@
 // ABOUTME: ALU/EX stage: forwarding muxes, the ALU, the branch comparator and the branch target.
 // ABOUTME: Branches resolve here, so a taken branch costs two flushed instructions.
+// Author: Sarvesh Srinath
 `default_nettype none
 
 module ex_stage (
