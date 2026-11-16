@@ -29,7 +29,7 @@ id	image	motion	line
 04_10	slide_08.png	push	That's 248 automated checks, all passing.
 05_01	slide_09.png	still	So, is it faster? After place and route on a Lattice ECP5, pipelining nearly doubles the clock, from 58.75 to 113.86 megahertz.
 05_02	slide_09.png	push	Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision.
-05_03	slide_10.png	still	Without forwarding, the biggest loss is waiting on data. Forwarding removes them.
+05_03	slide_10.png	still	Without forwarding, the biggest loss is waiting on data. Forwarding removes that.
 05_04	slide_10.png	push	What's left is the load stall and branches, adding 0.23 to 0.35 cycles per instruction.
 05_05	slide_11.png	still	So the pipeline is only 0.71 to 1.29 times as fast. Nowhere near five.
 05_06	slide_11.png	push	The slowest path is still 52 percent of the single cycle one without forwarding, 70 percent with it. And every loop pays two cycles for its branch.

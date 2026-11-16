@@ -2,8 +2,8 @@
 <!-- ABOUTME: Frames come from make_frames.py; the order and backgrounds come from shots.tsv. -->
 # Editing the Phase I video
 
-**For Aryan, or the Claude helping him.** Each teammate sends one face take with all
-their lines in order and a pause of about 2 seconds between lines. You cut the takes
+**For Aryan, or the Claude helping with the edit.** Each teammate sends their segment as one face take
+(Navodit sends two, opening and closing), lines in order and a pause of about 2 seconds between lines. You cut the takes
 into one video and put the matching frame in the background behind each line.
 
 ## What you have
@@ -22,14 +22,16 @@ into one video and put the matching frame in the background behind each line.
   ```sh
   uv run --no-project --with pymupdf --with pygments --with pillow python docs/video/make_frames.py ~/phase1-video/frames
   ```
-- The takes, in `Phase1 Video` on the shared Drive: `navodit`, `aryan`, `sarvesh`, `trishit`, `husain`.
+- The six takes, in `Phase1 Video` on the shared Drive: `navodit_opening`, `aryan`, `sarvesh`,
+  `trishit`, `husain`, `navodit_closing`. The `id` in `shots.tsv` is only a row number for you;
+  the speakers never see it.
 
 ## Steps
 
 1. Download every take and build the frames.
 2. In each take, find where each line starts and ends. The 2 second pauses mark the
    boundaries. Where a speaker repeated a line, use the last clean attempt.
-3. Put the takes in `shots.tsv` order. Navodit opens (`01_*`) and closes (`06_*`).
+3. Put the takes in order: Navodit opening, Aryan, Sarvesh, Trishit, Husain, Navodit closing.
 4. For each line, place its `image` behind the speaker for exactly that line, with its `motion`.
    The background changes on the first word of the next line.
 5. Shorten the pauses between lines to about half a second.
