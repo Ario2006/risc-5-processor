@@ -392,7 +392,7 @@ def fig_architecture_single() -> None:
     # PC+4 to PC Mux input 0 (enters from top-left of PC Mux at x=0.75)
     ax.plot([1.9, 0.75, 0.75], [7.7, 7.7, 6.2], color=INK, linewidth=1.1)
     arrow(ax, (0.75, 6.6), (0.75, 6.2))
-    ax.text(0.75, 6.35, "0", fontsize=7, color=INK2, ha="right")
+    ax.text(0.58, 6.35, "0", fontsize=7.5, color=INK2, ha="right", va="center")
 
     # Branch Target adder (PC + imm) placed at x=3.5, y=8.3, h=1.0
     box(ax, 3.5, 8.3, 1.6, 1.0, "Branch\nTarget (+)", size=7.5)
@@ -405,7 +405,7 @@ def fig_architecture_single() -> None:
     # Branch target output to PC Mux input 1 (enters from top-right of PC Mux at x=1.25)
     ax.plot([3.5, 1.25, 1.25], [8.6, 8.6, 6.2], color=branch_color, linewidth=1.1)
     arrow(ax, (1.25, 6.6), (1.25, 6.2), color=branch_color)
-    ax.text(1.25, 6.35, "1", fontsize=7, color=branch_color, ha="left")
+    ax.text(1.42, 6.35, "1", fontsize=7.5, color=branch_color, ha="left", va="center")
 
     # 2. Instruction memory
     box(ax, 3.5, 4.2, 2.1, 2.2, "Instruction\nmemory\n(256 words)")
@@ -414,8 +414,8 @@ def fig_architecture_single() -> None:
     # Instruction bus split out of IMEM (Critical path starts at retimed instr)
     ax.plot([5.6, 6.0], [5.3, 5.3], color=crit_color, linewidth=2.0)
 
-    # 3. Control unit (placed at x=6.2, y=7.4, w=2.1, h=1.4)
-    box(ax, 6.2, 7.4, 2.1, 1.4, "Control\nunit", fill="#eef3e8", size=8.5)
+    # 3. Control unit (placed at x=6.2, y=7.2, w=2.1, h=1.8)
+    box(ax, 6.2, 7.2, 2.1, 1.8, "Control\nunit", fill="#eef3e8", size=8.5)
     ax.plot([5.8, 5.8, 6.2], [5.3, 8.1, 8.1], color=INK, linewidth=1.1)
     arrow(ax, (5.8, 8.1), (6.2, 8.1))
 
@@ -445,17 +445,17 @@ def fig_architecture_single() -> None:
     arrow(ax, (11.2, 5.7), (13.5, 5.7), color=crit_color, lw=2.0)
     arrow(ax, (12.9, 4.05), (13.5, 4.05), color=crit_color, lw=1.8)
 
-    # 8. Branch comparator (placed at x=11.6, y=6.2, w=2.8, h=1.0)
-    box(ax, 11.6, 6.2, 2.8, 1.0, "Branch compare\n(rs1 == rs2) ^ bne", fill="#fbeedd", size=7.5)
-    ax.plot([11.4, 11.4, 11.6], [5.7, 6.8, 6.8], color=INK, linewidth=1.0)
-    arrow(ax, (11.5, 6.8), (11.6, 6.8))
-    ax.plot([11.5, 11.5, 11.6], [4.3, 6.4, 6.4], color=INK, linewidth=1.0)
-    arrow(ax, (11.55, 6.4), (11.6, 6.4))
+    # 8. Branch comparator (placed at y=6.8 to 7.7, completely above ALU top at 6.4)
+    box(ax, 11.6, 6.8, 2.5, 0.9, "Branch compare\n(rs1 == rs2) ^ bne", fill="#fbeedd", size=7.5)
+    ax.plot([11.45, 11.45, 11.6], [5.7, 7.35, 7.35], color=INK, linewidth=1.0)
+    arrow(ax, (11.5, 7.35), (11.6, 7.35))
+    ax.plot([11.55, 11.55, 11.6], [4.3, 7.0, 7.0], color=INK, linewidth=1.0)
+    arrow(ax, (11.55, 7.0), (11.6, 7.0))
 
     # Taken redirect wire (in branch_color):
-    # Runs from Branch compare (14.4, 6.7) up to y=9.7 (completely above Branch Target box),
+    # Runs from Branch compare (14.1, 7.25) up to y=9.7 (completely above Branch Target box),
     # then left all the way to x=0.2, then down to y=5.3, entering left side of PC Mux!
-    ax.plot([14.4, 14.8, 14.8, 0.2, 0.2, 0.5], [6.7, 6.7, 9.7, 9.7, 5.3, 5.3], color=branch_color, linewidth=1.2)
+    ax.plot([14.1, 14.5, 14.5, 0.2, 0.2, 0.5], [7.25, 7.25, 9.7, 9.7, 5.3, 5.3], color=branch_color, linewidth=1.2)
     arrow(ax, (0.2, 5.3), (0.5, 5.3), color=branch_color)
     ax.text(7.5, 9.85, "taken = branch && condition (selects branch target at PC Mux)",
             fontsize=8, color=branch_color, fontweight="bold")
@@ -484,38 +484,36 @@ def fig_architecture_single() -> None:
             fontsize=8, color=crit_color, fontweight="bold")
 
     # 12. Control lines (dashed, completely avoiding all text and boxes)
-    # RegWr
-    ax.plot([8.3, 9.2, 9.2], [7.9, 7.9, 6.7], color=ctrl_color, lw=1.1, ls="--")
-    arrow(ax, (9.2, 7.0), (9.2, 6.7), color=ctrl_color, ls="--")
-    ax.text(8.5, 8.02, "RegWr", fontsize=7.5, color=ctrl_color)
-
-    # ALUSrc
-    ax.plot([8.3, 12.4, 12.4], [7.7, 7.7, 4.8], color=ctrl_color, lw=1.1, ls="--")
-    arrow(ax, (12.4, 5.1), (12.4, 4.8), color=ctrl_color, ls="--")
-    ax.text(10.2, 7.82, "ALUSrc", fontsize=7.5, color=ctrl_color)
-
-    # Branch control to branch compare box
-    ax.plot([8.3, 11.2, 11.2, 11.6], [7.6, 7.6, 6.9, 6.9], color=ctrl_color, lw=1.1, ls="--")
-    arrow(ax, (11.2, 6.9), (11.6, 6.9), color=ctrl_color, ls="--")
-    ax.text(9.2, 7.72, "Branch/NE", fontsize=7.5, color=ctrl_color)
-
-    # ALUOp - routes to x=15.0 (right side of ALU, above at y=7.3, drops down to 6.4)
-    # Does NOT pass through Branch compare (which is at x=11.6 to 14.4, y=6.2 to 7.2)
-    ax.plot([8.3, 15.0, 15.0], [7.3, 7.3, 6.4], color=ctrl_color, lw=1.1, ls="--")
-    arrow(ax, (15.0, 6.7), (15.0, 6.4), color=ctrl_color, ls="--")
-    ax.text(10.2, 7.42, "ALUOp", fontsize=7.5, color=ctrl_color)
+    # MemRd - routes at y=9.3 to x=20.7, drops down to 6.0
+    ax.plot([8.3, 20.7, 20.7], [9.3, 9.3, 6.0], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (20.7, 6.3), (20.7, 6.0), color=ctrl_color, ls="--")
+    ax.text(19.4, 9.45, "MemRd", fontsize=7.5, color=ctrl_color)
 
     # MemWr - routes at y=8.8 to x=17.5, drops down to 6.2
-    # Text placed at (16.3, 8.95), above the dashed line
     ax.plot([8.3, 17.5, 17.5], [8.8, 8.8, 6.2], color=ctrl_color, lw=1.1, ls="--")
     arrow(ax, (17.5, 6.5), (17.5, 6.2), color=ctrl_color, ls="--")
     ax.text(16.3, 8.95, "MemWr", fontsize=7.5, color=ctrl_color)
 
-    # MemRd - routes at y=9.3 to x=20.7, drops down to 6.0
-    # Text placed at (19.4, 9.45), above the dashed line
-    ax.plot([8.3, 20.7, 20.7], [9.3, 9.3, 6.0], color=ctrl_color, lw=1.1, ls="--")
-    arrow(ax, (20.7, 6.3), (20.7, 6.0), color=ctrl_color, ls="--")
-    ax.text(19.4, 9.45, "MemRd", fontsize=7.5, color=ctrl_color)
+    # ALUOp - routes at y=8.4 to x=14.8, drops into top of ALU at (14.8, 6.4)
+    ax.plot([8.3, 14.8, 14.8], [8.4, 8.4, 6.4], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (14.8, 6.7), (14.8, 6.4), color=ctrl_color, ls="--")
+    ax.text(13.6, 8.52, "ALUOp", fontsize=7.5, color=ctrl_color)
+
+    # Branch/NE - routes at y=8.0 to x=12.85, drops into top of Branch compare at (12.85, 7.7)
+    ax.plot([8.3, 12.85, 12.85], [8.0, 8.0, 7.7], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (12.85, 8.0), (12.85, 7.7), color=ctrl_color, ls="--")
+    ax.text(11.5, 8.12, "Branch/NE", fontsize=7.5, color=ctrl_color)
+
+    # RegWr - routes at y=7.7 to x=9.2, drops into top of Regfile at (9.2, 6.7)
+    ax.plot([8.3, 9.2, 9.2], [7.7, 7.7, 6.7], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (9.2, 7.0), (9.2, 6.7), color=ctrl_color, ls="--")
+    ax.text(8.5, 7.82, "RegWr", fontsize=7.5, color=ctrl_color)
+
+    # ALUSrc - routes around Branch compare box:
+    # Drops at x=11.35 down to y=5.15, runs horizontally to x=12.45, drops into ALU Src Mux at 4.8
+    ax.plot([8.3, 11.35, 11.35, 12.45, 12.45], [7.35, 7.35, 5.15, 5.15, 4.8], color=ctrl_color, lw=1.1, ls="--")
+    arrow(ax, (12.45, 5.15), (12.45, 4.8), color=ctrl_color, ls="--")
+    ax.text(9.8, 7.47, "ALUSrc", fontsize=7.5, color=ctrl_color)
 
     fig.savefig(FIG / "architecture_single.png")
     plt.close(fig)
