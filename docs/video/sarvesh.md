@@ -2,13 +2,14 @@
 <!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
 # Sarvesh: one take
 
-Read [`README.md`](README.md) first. Record your whole segment as **one take**, face on camera,
-saying the lines below in order, with a short pause between them. Upload it as `sarvesh.mov`.
+Read [`README.md`](README.md) first. Record your whole segment as **one take**, voice
+only, no camera, saying the lines below in order, with a short pause between them. Upload it
+named `sarvesh`, in any audio or video format.
 
-| Behind you | Say |
+| On screen | Say |
 |---|---|
-| Slide 5, slow push in | To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once. |
-| Zoomed on the datapath diagram | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
+| Slide 5 | To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once. |
+| Slide 5, the datapath diagram | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
 | Slide 6, Structural card lit | Structural hazards, two instructions fighting over hardware, we designed out completely. |
 | Slide 6, Data card lit | Forwarding fixes almost every data hazard. The exception is a load whose result is used straight away. That costs one cycle. |
 | Slide 6, Control card lit | And by the time a branch is taken, two wrong instructions have started, so we flush them. |

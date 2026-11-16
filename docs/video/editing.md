@@ -1,52 +1,52 @@
-<!-- ABOUTME: Aryan's editing brief: cut five face takes together with the right frame behind each line. -->
-<!-- ABOUTME: Frames come from make_frames.py; the order and backgrounds come from shots.tsv. -->
+<!-- ABOUTME: Husain's editing brief: turn the voice takes into the video with make_frames.py and assemble.py. -->
+<!-- ABOUTME: The order and frames come from shots.tsv; every shot is a still, with no zoom. -->
 # Editing the Phase I video
 
-**For Aryan, or the Claude helping with the edit.** Each teammate sends their segment as one face take
-(Navodit sends two, opening and closing), lines in order and a pause of about 2 seconds between lines. You cut the takes
-into one video and put the matching frame in the background behind each line.
+**For Husain, or the Claude helping with the edit.** Each teammate sends their segment as one
+voice take (Navodit sends two, opening and closing), with the lines in order and a pause of about
+2 seconds between lines. [`assemble.py`](assemble.py) cuts each take into lines at the pauses and
+puts the matching frame full screen under each line.
 
 ## What you have
 
-- [`shots.tsv`](shots.tsv): one row per line, in final order: `id`, `image` (the
-  background frame), `motion`, and the `line` the speaker says.
-  - `still`: the frame holds.
-  - `push`: a slow 6% zoom into the centre.
-  - `crop:x:y:w:h`: start on that region of the 1920x1080 frame, then zoom in 4%.
-  - `,end` on the last row: hold 2 seconds after the last word.
-- [`make_frames.py`](make_frames.py): builds every background frame at 1920x1080. It exports
-  the 12 slides from `slides/phase1-slides.pdf`, spotlights each card on slide 6,
-  renders the Verilog cards with the discussed line highlighted, runs `make test` and
-  `make demo` for the real terminal output, and lays out the three annotated waveforms.
-  It stops if a test or the demo fails. From the repo root:
-  ```sh
-  uv run --no-project --with pymupdf --with pygments --with pillow python docs/video/make_frames.py ~/phase1-video/frames
-  ```
-- The six takes, in `Phase1 Video` on the shared Drive: `navodit_opening`, `aryan`, `sarvesh`,
-  `trishit`, `husain`, `navodit_closing`. The `id` in `shots.tsv` is only a row number for you;
-  the speakers never see it.
+- [`shots.tsv`](shots.tsv): one row per line, in final order: `id`, `image` (the frame),
+  `motion`, and the `line` the speaker says. Every row is `still`. The last row is
+  `still,end`, which holds the frame for 2 seconds after the last word.
+- [`make_frames.py`](make_frames.py): builds every frame at 1920x1080. It exports the 12 slides
+  from `slides/phase1-slides.pdf`, spotlights each card on slide 6, renders the Verilog cards
+  with the discussed line highlighted, runs `make test` and `make demo` for the real terminal
+  output, and lays out the three annotated waveforms. It stops if a test or the demo fails.
+- [`assemble.py`](assemble.py): needs `ffmpeg`. It reads the takes from `~/phase1-video/takes`
+  and the frames from `~/phase1-video/frames`, and writes `~/phase1-video/phase1-video.mp4`.
 
 ## Steps
 
-1. Download every take and build the frames.
-2. In each take, find where each line starts and ends. The 2 second pauses mark the
-   boundaries. Where a speaker repeated a line, use the last clean attempt.
-3. Put the takes in order: Navodit opening, Aryan, Sarvesh, Trishit, Husain, Navodit closing.
-4. For each line, place its `image` behind the speaker for exactly that line, with its `motion`.
-   The background changes on the first word of the next line.
-5. Shorten the pauses between lines to about half a second.
-6. Match loudness across speakers, about -16 LUFS for the whole video.
+1. Build the frames, from the repo root:
+   ```sh
+   uv run --no-project --with pymupdf --with pygments --with pillow python docs/video/make_frames.py ~/phase1-video/frames
+   ```
+2. Download every take from `Phase1 Video` on the shared Drive into `~/phase1-video/takes`, named
+   `navodit_opening`, `aryan`, `sarvesh`, `trishit`, `husain` and `navodit_closing`. Any audio or
+   video format works; only the audio is used.
+3. Run `python3 docs/video/assemble.py`. Add `--tts-missing` to fill missing takes with a macOS
+   `say` voice for a rough cut.
+4. If a take has a repeated line or a false start, the script prints the speech segments it found
+   and writes `takes/cuts.detected.tsv`. Put the clean attempt of each line in `takes/cuts.tsv`
+   as `id`, `start`, `end` in seconds, tab separated, and run it again.
+
+The script shortens the pauses between lines to about half a second and normalizes the whole
+video to -16 LUFS.
 
 ## Check before you share it
 
-- Under 5:00.
-- Watch it once with sound: every background matches what is being said, and no
-  speaker's face covers the text on a slide or the highlighted line of code.
+- Under 5:00. The script prints the length.
+- Watch it once with sound: every frame matches what is being said, and no false start or
+  "retake" is left in.
 
 ## Rules
 
 - Do not change any words or numbers. They match `results/`.
 - Any text you add on screen has no dashes (`-`, `–`, `—`); use commas or "and".
-- No music, and no transitions other than cuts and the zooms in `shots.tsv`.
+- No music, no zooms, and no transitions other than cuts.
 - If it runs over 5:00, ask the speaker to record again faster. Do not speed up audio.
 - Do not commit video or audio files.

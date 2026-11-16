@@ -1,14 +1,14 @@
 id	image	motion	line
 01_01	slide_01.png	still	Hi, we're Processors Assemble: Sarvesh, Aryan, Trishit, Husain, and I'm Navodit.
-01_02	slide_01.png	push	We built a RISC-V processor in Verilog, first single cycle, then as a five stage pipeline, to see how much faster pipelining really makes it.
+01_02	slide_01.png	still	We built a RISC-V processor in Verilog, first single cycle, then as a five stage pipeline, to see how much faster pipelining really makes it.
 01_03	slide_02.png	still	On paper, five stages means five times faster. So we built three CPUs for the same 18 instructions to test that.
-01_04	slide_02.png	push	Single cycle, a pipeline without forwarding, and one with it. Same tests, same FPGA.
+01_04	slide_02.png	still	Single cycle, a pipeline without forwarding, and one with it. Same tests, same FPGA.
 01_05	slide_03.png	still	To compare them, we use the iron law: run time is instructions, times cycles per instruction, over the clock.
-01_06	slide_03.png	push	So a pipeline only wins if its cycles per instruction stay below its clock speedup. That bar is 1.94 without forwarding, and 1.43 with it.
+01_06	slide_03.png	still	So a pipeline only wins if its cycles per instruction stay below its clock speedup. That bar is 1.94 without forwarding, and 1.43 with it.
 02_01	slide_04.png	still	Here's our starting point. In the single cycle CPU, every instruction finishes in one cycle, so the clock must wait for the slowest one, a load.
-02_02	slide_04.png	push	A load reads registers, uses the ALU, reads memory and writes back, all at once. That's 17 nanoseconds, or 58.75 megahertz.
-03_01	slide_05.png	push	To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once.
-03_02	slide_05.png	crop:140:250:1220:686	The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch.
+02_02	slide_04.png	still	A load reads registers, uses the ALU, reads memory and writes back, all at once. That's 17 nanoseconds, or 58.75 megahertz.
+03_01	slide_05.png	still	To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once.
+03_02	slide_05.png	still	The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch.
 03_03	s06_structural.png	still	Structural hazards, two instructions fighting over hardware, we designed out completely.
 03_04	s06_data.png	still	Forwarding fixes almost every data hazard. The exception is a load whose result is used straight away. That costs one cycle.
 03_05	s06_control.png	still	And by the time a branch is taken, two wrong instructions have started, so we flush them.
@@ -18,20 +18,20 @@ id	image	motion	line
 03_09	code_hazard_44.png	still	And this is the stall. With forwarding, only the load case. Without it, any result still on its way.
 03_10	code_fwd_25_28.png	still	Forwarding checks the newest result first, so you always get the latest value.
 04_01	term_test.png	still	Now let's see it run. make test runs every program on all three CPUs, and checks each against our Python reference simulator.
-04_02	term_test.png	push	All 248 pass, in under three seconds.
+04_02	term_test.png	still	All 248 pass, in under three seconds.
 04_03	term_demo.png	still	make demo runs a program built to hit every hazard: seven instructions, 14 cycles, one stall, one flush. It also saves a waveform.
 04_04	wave_forward.png	still	Here's forwarding. Both forward signals switch to 2, so the add gets x1 straight from the instruction ahead.
 04_05	wave_load_use.png	still	Here's the stall. The add right after the load waits one cycle for its value.
 04_06	wave_branch_flush.png	still	And the flush. The branch is taken, so the two instructions behind it are thrown away.
 04_07	slide_07.png	still	The same program as a pipeline diagram from the simulation: 14 cycles with forwarding, 19 without.
-04_08	slide_07.png	push	Without forwarding, an instruction waits until the result it needs is written back.
+04_08	slide_07.png	still	Without forwarding, an instruction waits until the result it needs is written back.
 04_09	slide_08.png	still	Every program must match the reference on all three CPUs: every register, every memory word, and the instruction count.
-04_10	slide_08.png	push	That's 248 automated checks, all passing.
+04_10	slide_08.png	still	That's 248 automated checks, all passing.
 05_01	slide_09.png	still	So, is it faster? After place and route on a Lattice ECP5, pipelining nearly doubles the clock, from 58.75 to 113.86 megahertz.
-05_02	slide_09.png	push	Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision.
+05_02	slide_09.png	still	Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision.
 05_03	slide_10.png	still	Without forwarding, the biggest loss is waiting on data. Forwarding removes that.
-05_04	slide_10.png	push	What's left is the load stall and branches, adding 0.23 to 0.35 cycles per instruction.
+05_04	slide_10.png	still	What's left is the load stall and branches, adding 0.23 to 0.35 cycles per instruction.
 05_05	slide_11.png	still	So the pipeline is only 0.71 to 1.29 times as fast. Nowhere near five.
-05_06	slide_11.png	push	The slowest path is still 52 percent of the single cycle one without forwarding, 70 percent with it. And every loop pays two cycles for its branch.
+05_06	slide_11.png	still	The slowest path is still 52 percent of the single cycle one without forwarding, 70 percent with it. And every loop pays two cycles for its branch.
 06_01	slide_12.png	still	So a pipeline only wins when the clock it gains beats the cycles it loses.
-06_02	slide_12.png	push,end	In Phase II, we go after those two losses, branches and the long critical path, then add instructions and run on a real board. Thanks for watching.
+06_02	slide_12.png	still,end	In Phase II, we go after those two losses, branches and the long critical path, then add instructions and run on a real board. Thanks for watching.
