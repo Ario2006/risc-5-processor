@@ -9,7 +9,7 @@ named `sarvesh`, in any audio or video format.
 | On screen | Say |
 |---|---|
 | Slide 5 | To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once. |
-| Slide 5, the datapath diagram | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
+| Slide 5 | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
 | Slide 6, Structural card lit | Structural hazards, two instructions fighting over hardware, we designed out completely. |
 | Slide 6, Data card lit | Forwarding fixes almost every data hazard. The exception is a load whose result is used straight away. That costs one cycle. |
 | Slide 6, Control card lit | And by the time a branch is taken, two wrong instructions have started, so we flush them. |

@@ -30,9 +30,12 @@ puts the matching frame full screen under each line.
    video format works; only the audio is used.
 3. Run `python3 docs/video/assemble.py`. Add `--tts-missing` to fill missing takes with a macOS
    `say` voice for a rough cut.
-4. If a take has a repeated line or a false start, the script prints the speech segments it found
-   and writes `takes/cuts.detected.tsv`. Put the clean attempt of each line in `takes/cuts.tsv`
-   as `id`, `start`, `end` in seconds, tab separated, and run it again.
+4. If a take has a repeated line or a false start, it won't split into the right number of
+   lines. The script prints the speech segments it found and writes `takes/cuts.detected.tsv`.
+   Put the clean attempt of **every** line of that speaker in `takes/cuts.tsv`, one line each:
+   `id start end`, times in seconds. Then run it again.
+5. Read every `check <id>` warning. It means that line's length doesn't fit its word count,
+   usually a false start that stayed in or two lines cut as one. Fix it in `cuts.tsv`.
 
 The script shortens the pauses between lines to about half a second and normalizes the whole
 video to -16 LUFS.

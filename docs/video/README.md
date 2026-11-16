@@ -25,7 +25,8 @@ Your lines: [Navodit](navodit.md), [Aryan](aryan.md), [Sarvesh](sarvesh.md),
 ## How to record
 
 1. **Mic:** QuickTime Player, File, New Audio Recording works. A screen or phone recording
-   is fine too; only the audio is used. Keep the mic at the same distance throughout.
+   is fine too; only the audio is used. For a macOS screen recording, pick the mic under
+   Options. Play it back with sound before you upload. Keep the mic at the same distance.
 2. **Room:** quiet, with the fan and AC off.
 3. **One take for your segment.** Say your lines in order without stopping the recording.
 4. **Pause briefly between lines.** About 2 seconds. That is where the edit switches the frame, and the pause gets trimmed.

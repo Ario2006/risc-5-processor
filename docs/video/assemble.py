@@ -14,20 +14,23 @@ Inputs:
 
 Each take is split into lines at pauses. If a take doesn't split into the expected
 number of lines (a repeated line, a long mid-line pause), the script prints what it
-found and writes takes/cuts.detected.tsv. Copy the rows you need into cuts.tsv, fix
-the times, and run it again.
+found and writes takes/cuts.detected.tsv. Put all of that speaker's lines in cuts.tsv
+with the right times, and run it again. A take that splits into the right count can
+override single lines. A line whose length doesn't fit its word count gets a warning.
 
---tts-missing fills any missing take with a macOS `say` placeholder, for a rough cut.
+--tts-missing fills any missing take with a macOS `say` placeholder in ~/phase1-video/tts,
+for a rough cut.
 """
 
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
 HOME = Path.home() / "phase1-video"
-TAKES, FRAMES, OUT = HOME / "takes", HOME / "frames", HOME / "phase1-video.mp4"
+TAKES, FRAMES, TTS, OUT = HOME / "takes", HOME / "frames", HOME / "tts", HOME / "phase1-video.mp4"
 SHOTS = Path(__file__).with_name("shots.tsv")
 ORDER = [
     ("navodit_opening", "01"),
@@ -39,11 +42,15 @@ ORDER = [
 ]
 FPS, SR = 30, 48000
 LEAD, TAIL, END_HOLD = 0.15, 0.35, 2.0  # ~0.5 s between lines; 2 s hold on the ,end row
-GAP, BLIP = 0.9, 0.35  # line break = silence >= GAP; drop sounds < BLIP
+NOISE, GAP, BLIP = -38, 1.2, 0.35  # silence below NOISE dB; line break >= GAP s; drop < BLIP s
+WORDS_PER_S = 2.5  # each digit counts as a word, since numbers are read digit by digit
 
 
 def run(*cmd):
-    return subprocess.run(cmd, check=True, capture_output=True, text=True)
+    try:
+        return subprocess.run(cmd, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        sys.exit(f"{cmd[0]} failed:\n{e.stderr[-2000:]}")
 
 
 def duration(f):
@@ -57,7 +64,7 @@ def duration(f):
 def speech_segments(f):
     """Return [(start, end)] of speech, split at silences >= GAP, ignoring short blips."""
     err = subprocess.run(
-        ["ffmpeg", "-i", str(f), "-af", "silencedetect=noise=-38dB:d=0.25", "-f", "null", "-"],
+        ["ffmpeg", "-i", str(f), "-af", f"silencedetect=noise={NOISE}dB:d=0.25", "-f", "null", "-"],
         check=False,
         capture_output=True,
         text=True,
@@ -97,24 +104,34 @@ def main():
         for l in SHOTS.read_text().splitlines()[1:]
         if l.strip()
     ]
+    if not (shutil.which("ffmpeg") and shutil.which("ffprobe")):
+        sys.exit("needs ffmpeg and ffprobe on PATH")
+    missing = sorted({r["image"] for r in rows if not (FRAMES / r["image"]).exists()})
+    if missing:
+        sys.exit(f"missing frames in {FRAMES}: {', '.join(missing)}. Run make_frames.py first.")
     overrides = {}
     if (TAKES / "cuts.tsv").exists():
         for l in (TAKES / "cuts.tsv").read_text().splitlines():
-            i, a, b = l.split("\t")[:3]
-            overrides[i] = (float(a), float(b))
+            f = l.split()
+            if len(f) >= 3 and f[0] != "id":
+                overrides[f[0]] = (float(f[1]), float(f[2]))
     TAKES.mkdir(parents=True, exist_ok=True)
 
     cuts, detected, bad = [], [], False
     for name, seg in ORDER:
         lines = [r for r in rows if r["id"].startswith(seg + "_")]
-        found = sorted(p for p in TAKES.glob(name + ".*") if p.suffix != ".tsv")
-        if not found:
-            if not tts:
-                sys.exit(f"missing take: {TAKES}/{name}.*  (or pass --tts-missing)")
-            found = [TAKES / f"{name}.tts.wav"]
-            tts_take(lines, found[0])
+        found = [p for p in TAKES.glob(name + ".*") if p.suffix != ".tsv"]
+        if len(found) > 1:
+            sys.exit(f"more than one take for {name}: {', '.join(p.name for p in found)}")
+        if found:
+            take = found[0]
+        elif tts:
+            TTS.mkdir(parents=True, exist_ok=True)
+            take = TTS / f"{name}.wav"
+            tts_take(lines, take)
             print(f"{name}: using say placeholder")
-        take = found[0]
+        else:
+            sys.exit(f"missing take: {TAKES}/{name}.*  (or pass --tts-missing)")
         segs = speech_segments(take)
         for i, (a, b) in enumerate(segs):
             detected.append(
@@ -126,8 +143,12 @@ def main():
             for a, b in segs:
                 print(f"    {a:7.2f} - {b:7.2f}  ({b - a:.1f} s)")
             continue
-        for r, s in zip(lines, segs):
-            cuts.append((r, take, overrides.get(r["id"], s)))
+        for i, r in enumerate(lines):
+            a, b = overrides.get(r["id"]) or segs[i]
+            expect = len(re.findall(r"[A-Za-z']+|\d", r["line"])) / WORDS_PER_S
+            if not 0.6 * expect <= b - a <= 1.6 * expect:
+                print(f"check {r['id']}: {b - a:.1f} s of speech, expected about {expect:.1f} s")
+            cuts.append((r, take, (a, b)))
     (TAKES / "cuts.detected.tsv").write_text("\n".join(detected) + "\n")
     if bad:
         sys.exit(f"\nFix with {TAKES}/cuts.tsv (see cuts.detected.tsv), then rerun.")
@@ -222,12 +243,13 @@ def main():
         )
 
     total = duration(OUT)
-    print(f"\nwrote {OUT}  {int(total // 60)}:{total % 60:04.1f}")
+    t = round(total)
+    print(f"\nwrote {OUT}  {t // 60}:{t % 60:02d}")
     if total > 300:
         print(
             "OVER 5:00: ask the longest speaker to record again a bit faster. Don't speed up audio."
         )
-    if any(t.name.endswith(".tts.wav") for _, t, _ in cuts):
+    if any(take.parent == TTS for _, take, _ in cuts):
         print("contains say placeholders: rough cut only")
 
 
