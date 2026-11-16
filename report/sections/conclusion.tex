@@ -29,13 +29,14 @@ first resolve branches in ID, which cuts the penalty to one cycle at the cost
 of a comparator and forwarding paths in ID, then add a predictor with
 two-bit counters \cite{smith1981} and a branch target buffer, so a correctly
 predicted loop branch costs no cycles.
-\item \emph{Stage balance.} The critical path, set by EX and the branch
-decision, is 8.8\,ns without forwarding and 11.9\,ns with it. We will split
-EX or move the branch decision out of it, so the forwarding pipeline keeps
-more of its clock gain.
-\item \emph{Instruction set.} Adding \texttt{jal}, \texttt{jalr} and byte and
-halfword loads will let us run compiled C programs instead of hand-written
-assembly.
+\item \emph{Stage balance.} The critical path is 8.8\,ns without forwarding,
+ending at the ALU result, and 11.9\,ns with it, through forwarding into the
+branch decision. We will split EX or move the branch decision out of it, so
+the forwarding pipeline keeps more of its clock gain.
+\item \emph{Instruction set.} Implementing the rest of RV32I, including
+\texttt{jal}, \texttt{jalr}, \texttt{lui}, \texttt{auipc}, the remaining
+branches, shifts and compares, and byte and halfword loads and stores, will
+let us run compiled C programs instead of hand-written assembly.
 \item \emph{Hardware.} We will run the design on a real ECP5 board using the
 existing FPGA top level.
 \end{enumerate}

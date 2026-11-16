@@ -89,12 +89,15 @@ Every item fixes a loss we measured.
      counter learns "taken" and mispredicts about once per loop. It takes two wrong guesses
      in a row to flip the prediction.
    - Branch target buffer: remembers the target, so IF can jump in the same cycle.
-2. **Stage balance.** The critical path, set by EX and the branch decision, is 8.8 ns without
-   forwarding and 11.9 ns with it: 52% and 70% of the 17.0 ns single-cycle path, not 20%.
+2. **Stage balance.** The critical path is 8.8 ns without forwarding (it ends at the ALU result,
+   `ex.ex_mem_value` in `synth_runs.csv`) and 11.9 ns with it (forwarding into the branch
+   decision, which drives stall and flush): 52% and 70% of the 17.0 ns single-cycle path, not 20%.
    These are 1 / Fmax, the whole critical path, not a pure EX delay. Split EX or move the
    branch decision out.
-3. **Instruction set.** `jal` and `jalr` are needed for function calls, and byte and halfword
-   loads for C strings and chars. Then we can run compiled C, not just hand-written assembly.
+3. **Instruction set.** Compiled C needs the rest of RV32I: `jal` and `jalr` for function calls,
+   `lui` and `auipc` for large constants and addresses, the other branches (`blt`, `bge`,
+   `bltu`, `bgeu`), shifts (`srl`, `sra`), `sltu`, and byte and halfword loads and stores for
+   chars and strings.
 4. **Hardware.** Run `synth/fpga_top.v` on a real ECP5 board.
 
 ## Traps
