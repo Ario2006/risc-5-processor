@@ -6,8 +6,8 @@ Read [`README.md`](README.md) first. One audio file per beat, named by its id.
 
 | File | On screen | Say |
 |---|---|---|
-| `02_01` | Slide 4 | The single-cycle datapath runs all 18 instructions in one cycle, so the clock must fit the slowest, a load. |
-| `02_02` | Slide 4, slow zoom | Register read, ALU, memory and write back, in series. That is 17 nanoseconds, 58.75 megahertz. |
+| `02_01` | Slide 4 | Here's our starting point. In the single cycle CPU, every instruction finishes in one cycle, so the clock must wait for the slowest one, a load. |
+| `02_02` | Slide 4, slow zoom | A load reads registers, uses the ALU, reads memory and writes back, all at once. That's 17 nanoseconds, or 58.75 megahertz. |
 
 ## Say it right
 
