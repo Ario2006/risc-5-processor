@@ -1,34 +1,35 @@
-% ABOUTME: Introduction: why pipeline a processor, what we built and what we found.
-% ABOUTME: Owner: Navodit (review and extend). Drafted from the measured results.
+% ABOUTME: Introduction: why pipeline a processor, what we built, what we contribute and the paper's layout.
+% ABOUTME: Owner: Navodit. Numbers are from results/.
 \section{Introduction}
 \label{sec:intro}
 
-A single-cycle processor finishes every instruction in one clock cycle, so
-its clock period must cover the slowest instruction: fetch, register read,
-ALU, data memory and write back in series. Pipelining splits that path into
-stages separated by registers, so several instructions are in flight at once
-and the clock can be shorter. The price is hazards: an instruction may need a
-result that is still in the pipeline, or the processor may fetch the wrong
-instructions after a branch \cite{patterson2021}.
+A single-cycle processor completes every instruction in one clock cycle, so
+the clock period has to fit the slowest instruction: fetch, register read,
+ALU, data memory and write back, one after another. Pipelining cuts this path
+into stages with registers between them, so several instructions are in
+flight at once and the clock only has to cover one stage. The cost is hazards:
+an instruction may need a result that an older instruction has not written
+yet, or the processor may fetch the wrong instructions after a branch
+\cite{patterson2021}.
 
-This project asks how much of the textbook benefit survives in a real
-implementation. We built three processors for the same RV32I subset
-\cite{riscvspec}: a single-cycle baseline, a five-stage pipeline that stalls on
-every data hazard, and the same pipeline with forwarding. All three were
-verified against a reference model, synthesised for the same FPGA, and timed
-on the same benchmarks.
+In the ideal case a five-stage pipeline is five times faster. This project
+asks how much of that gain survives in a real design, synthesised for a real
+FPGA. We built three processors for the same RV32I subset \cite{riscvspec}: a
+single-cycle baseline, a five-stage pipeline that stalls on every data
+hazard, and the same pipeline with forwarding. All three were verified
+against the same reference model, synthesised for the same FPGA and run on
+the same benchmarks, so the differences between them come from the
+microarchitecture.
 
-Our contributions are:
-\begin{itemize}
-\item a single-cycle CPU and a five-stage pipelined CPU in Verilog, with one
-module per stage and per pipeline register, as the project brief suggests;
-\item a verification flow that compares every register and memory word with a
-Python instruction set simulator, on directed hazard tests, benchmarks and
-constrained-random programs (248 checks);
-\item cycle accurate performance counters and pipeline diagrams drawn from the
-hardware's own trace;
-\item synthesis and place and route results on a Lattice ECP5 FPGA, with the
-critical path of each design explained stage by stage;
-\item a CPI, IPC and execution time comparison that separates the gain from a
-shorter clock from the losses to fill, stalls and branch flushes.
-\end{itemize}
+Our contributions are the three Verilog CPUs, with one module per stage and
+per pipeline register; a verification flow that compares every register and
+memory word with a Python instruction set simulator; cycle accurate
+performance counters; ECP5 synthesis results with each critical path
+explained; and a CPI and execution time study that separates the gain from a
+shorter clock from the losses to stalls and branch flushes.
+
+Section~\ref{sec:background} reviews related work and the performance model.
+Sections~\ref{sec:single} and~\ref{sec:pipeline} describe the two designs,
+Section~\ref{sec:verification} how we verified them and
+Section~\ref{sec:results} what we measured. Section~\ref{sec:conclusion}
+concludes and sets out the Phase II plan.
