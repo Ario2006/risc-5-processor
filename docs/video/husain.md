@@ -1,11 +1,11 @@
-<!-- ABOUTME: Husain's voice lines for the Phase I video: synthesis, CPI and speedup. -->
-<!-- ABOUTME: Husain also builds the video; the steps for his Claude are in editing.md. -->
-# Husain: 6 beats
+<!-- ABOUTME: Husain's lines for the Phase I video: synthesis, CPI and speedup. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
+# Husain: 6 lines
 
-Read [`README.md`](README.md) first. One audio file per beat, named by its id.
-You also build the video: hand [`editing.md`](editing.md) to your Claude once all 36 files are in.
+Read [`README.md`](README.md) first. Record all your lines in one take, face on camera, in order,
+with a 2 second pause between lines. The ids are for Aryan's edit, not file names.
 
-| File | On screen | Say |
+| Line | Behind you | Say |
 |---|---|---|
 | `05_01` | Slide 9 | So, is it faster? After place and route on a Lattice ECP5, pipelining nearly doubles the clock, from 58.75 to 113.86 megahertz. |
 | `05_02` | Slide 9, slow zoom | Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision. |

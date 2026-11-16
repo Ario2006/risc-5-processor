@@ -1,12 +1,13 @@
-<!-- ABOUTME: Trishit's voice lines for the Phase I video: the demo, waveforms, diagrams and verification. -->
-<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
-# Trishit: 10 beats
+<!-- ABOUTME: Trishit's lines for the Phase I video: the demo, waveforms, diagrams and verification. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
+# Trishit: 10 lines
 
-Read [`README.md`](README.md) first. One audio file per beat, named by its id.
-You do not need to record your screen. The build runs `make test` and `make demo`
-itself and shows their real output, then your annotated Surfer captures from `figures/`.
+Read [`README.md`](README.md) first. Record all your lines in one take, face on camera, in order,
+with a 2 second pause between lines. The ids are for Aryan's edit, not file names.
+You do not need to record your screen. `make_frames.py` renders the real `make test` and
+`make demo` output, and Aryan puts it behind you, then your annotated Surfer captures from `figures/`.
 
-| File | On screen | Say |
+| Line | Behind you | Say |
 |---|---|---|
 | `04_01` | Terminal card: `make test` | Now let's see it run. make test runs every program on all three CPUs, and checks each against our Python reference simulator. |
 | `04_02` | Same card, slow zoom | All 248 pass, in under three seconds. |

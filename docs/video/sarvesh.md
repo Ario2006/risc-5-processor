@@ -1,10 +1,11 @@
-<!-- ABOUTME: Sarvesh's voice lines for the Phase I video: pipeline, hazards and the Verilog walk. -->
-<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
-# Sarvesh: 10 beats
+<!-- ABOUTME: Sarvesh's lines for the Phase I video: pipeline, hazards and the Verilog walk. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
+# Sarvesh: 10 lines
 
-Read [`README.md`](README.md) first. One audio file per beat, named by its id.
+Read [`README.md`](README.md) first. Record all your lines in one take, face on camera, in order,
+with a 2 second pause between lines. The ids are for Aryan's edit, not file names.
 
-| File | On screen | Say |
+| Line | Behind you | Say |
 |---|---|---|
 | `03_01` | Slide 5, slow push in | To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once. |
 | `03_02` | Zoomed on the datapath diagram | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
