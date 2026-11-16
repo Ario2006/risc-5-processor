@@ -34,6 +34,8 @@ Watch the [Phase I video](https://github.com/Ario2006/risc-5-processor/blob/main
 
 ## Phase I Demo Video
 
+https://github.com/user-attachments/assets/32aab2c7-add4-4730-a6ef-789802c4ad09
+
 **[Watch the Phase I video (4:22)](https://github.com/Ario2006/risc-5-processor/blob/main/docs/video/phase1-video.mp4)**.
 If it doesn't play in your browser, [download it](https://github.com/Ario2006/risc-5-processor/raw/main/docs/video/phase1-video.mp4).
 The [demo script](docs/demo.md) walks through the same demo step by step.
