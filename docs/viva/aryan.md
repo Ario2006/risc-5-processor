@@ -30,17 +30,17 @@ which latch synchronously on the rising clock edge.
                               (rs1, rs2)                   |              |
                                 |       |                  v              |
                                 |       +-----------> [ 32-bit ALU ]      |
-                                |       |                  |              |
-                                v       v                  |              |
-                             [ Branch == ]                 v              |
-                                    |               [ Data Memory ]       |
-                                    v                      |              |
-                                  taken                    v              |
-                                    |               [  WB Mux  ] <--------+ (alu_y)
-                                    |                      |
-                                    |                      v (wb_data)
-                                    |               [ Regfile wdata ]
-                                    |
+                                |       |               |        |        |
+                                v       v               |        | (alu_y)|
+                             [ Branch == ]              v        |        |
+                                    |            [ Data Memory ] |        |
+                                    v                   |        |        |
+                                  taken                 v        v        |
+                                    |            [      WB Mux     ]      |
+                                    |                   |                 |
+                                    |                   v (wb_data)       |
+                                    |            [ Regfile wdata ]        |
+                                    |                                     |
                                     +-------------------------------------+
 ```
 
