@@ -1,20 +1,14 @@
-<!-- ABOUTME: Aryan's recording script for the Phase I video: the single-cycle slide. -->
-<!-- ABOUTME: Read docs/video/README.md first for setup and how to send clips. -->
-# Aryan: `02_aryan_single_cycle.mp4`, about 15 seconds
+<!-- ABOUTME: Aryan's voice lines for the Phase I video: the single-cycle slide. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
+# Aryan: 2 beats
 
-Read [`README.md`](README.md) for setup first.
+Read [`README.md`](README.md) first. One audio file per beat, named by its id.
 
-Start on slide 4, in full screen. Two seconds of silence, then:
-
-> The single-cycle datapath runs all 18 instructions in one cycle, so the clock must fit
-> the slowest, a load: register read, ALU, memory and write back in series.
-> That is 17 nanoseconds, 58.75 MHz.
-
-Two seconds of silence, stop.
+| File | On screen | Say |
+|---|---|---|
+| `02_01` | Slide 4 | The single-cycle datapath runs all 18 instructions in one cycle, so the clock must fit the slowest, a load. |
+| `02_02` | Slide 4, slow zoom | Register read, ALU, memory and write back, in series. That is 17 nanoseconds, 58.75 megahertz. |
 
 ## Say it right
 
-- "58.75 MHz" is "fifty eight point seven five megahertz".
-- "ALU" is "A L U".
-
-This clip is short, so record it three times and send the cleanest one.
+"58.75" is "fifty eight point seven five". "ALU" is "A L U".

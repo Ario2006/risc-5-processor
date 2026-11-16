@@ -1,55 +1,24 @@
-<!-- ABOUTME: Trishit's recording script for the Phase I video: the live demo, then the diagram and verification slides. -->
-<!-- ABOUTME: Read docs/video/README.md first for setup and how to send clips. -->
-# Trishit: `04_trishit_demo.mp4`, about 80 seconds
+<!-- ABOUTME: Trishit's voice lines for the Phase I video: the demo, waveforms, diagrams and verification. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
+# Trishit: 10 beats
 
-Read [`README.md`](README.md) for setup first.
+Read [`README.md`](README.md) first. One audio file per beat, named by its id.
+You do not need to record your screen. The build runs `make test` and `make demo`
+itself and shows their real output, then your annotated Surfer captures from `figures/`.
 
-## Before you record
-
-1. In the repo root, run `uv sync` and `make test` once, so nothing downloads on camera.
-2. Terminal: font size 20 or bigger, light theme if you have one, short prompt, then `clear`.
-3. Have `slides/phase1-slides.pdf` open on slide 7, ready to switch to.
-4. Do one dry run of the Surfer part so you know where the `fwd_a`, `stall` and `flush` rows are.
-
-## Script
-
-Start on the cleared terminal. Two seconds of silence, then type `make test` and press Enter.
-
-> Now the live demo. make test runs every program on all three CPUs and checks each
-> one against our Python reference simulator.
-
-When the result shows:
-
-> 248 passed, in under three seconds.
-
-Type `make demo` and press Enter.
-
-> make demo runs the hazard demo on the forwarding pipeline: seven instructions,
-> 14 cycles, one stall, one flush. It also writes a waveform.
-
-Type `surfer build/hazard_demo.vcd -c docs/waveforms/hazard_demo.sucl` and press Enter.
-Point the mouse at each event as you name it.
-
-> At EX PC 0x04, fwd_a and fwd_b both switch to 2: the add takes x1 straight from EX/MEM.
-> Next, stall goes high for one cycle: the add right after the load waits for its value.
-> Then flush goes high: the branch is taken in EX, so the two instructions behind it
-> become bubbles.
-
-Switch to the slides, full screen, on slide 7.
-
-> The same demo as pipeline diagrams from the hardware trace: 14 cycles with forwarding,
-> 19 without, because without forwarding a result still in EX or MEM cannot be used yet.
-
-`[NEXT]` to slide 8.
-
-> Every program runs on all three CPUs and must match our Python reference simulator:
-> every register, every data word, the instruction count. 248 automated checks, all passing.
-
-Two seconds of silence, stop.
+| File | On screen | Say |
+|---|---|---|
+| `04_01` | Terminal card: `make test` | Now the demo. make test runs every program on all three CPUs, and checks each one against our Python reference simulator. |
+| `04_02` | Same card, slow zoom | 248 passed, in under three seconds. |
+| `04_03` | Terminal card: `make demo` | make demo runs the hazard demo on the forwarding pipeline: seven instructions, 14 cycles, one stall, one flush. It also writes a waveform. |
+| `04_04` | `waveform_forward_annotated.png` | At EX PC hex four, forward A and forward B both switch to 2. The add takes x1 straight from EX MEM. |
+| `04_05` | `waveform_load_use_annotated.png` | Next, stall goes high for one cycle. The add right after the load waits for its value. |
+| `04_06` | `waveform_branch_flush_annotated.png` | Then flush goes high. The branch is taken in EX, so the two instructions behind it become bubbles. |
+| `04_07` | Slide 7 | The same demo as pipeline diagrams from the hardware trace: 14 cycles with forwarding, 19 without. |
+| `04_08` | Slide 7, slow zoom | Without forwarding, a result still in EX or MEM cannot be used yet. |
+| `04_09` | Slide 8 | Every program runs on all three CPUs and must match our Python reference simulator: every register, every data word, the instruction count. |
+| `04_10` | Slide 8, slow zoom | 248 automated checks, all passing. |
 
 ## Say it right
 
-- "0x04" is "hex four". "fwd_a" is "forward A".
-- "EX/MEM" is "E X to MEM".
-
-If Surfer is slow to open, keep quiet until it is up. Husain will cut the wait.
+"make test" is said as two words. "x1" is "x one". "EX MEM" is "E X MEM".

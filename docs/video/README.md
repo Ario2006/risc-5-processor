@@ -1,55 +1,39 @@
-<!-- ABOUTME: How the team records the Phase I video: who records which clip, setup rules, file names. -->
+<!-- ABOUTME: How the team records the Phase I video: voice only, one short audio file per beat. -->
 <!-- ABOUTME: Each person reads this page plus their own script; Husain's Claude reads editing.md. -->
 # Recording the Phase I video
 
-Everyone records their own part alone. Husain collects the clips and edits them
-with Claude, following [`editing.md`](editing.md). Final length is about 4:35, under the 5 minute limit.
+The video is a **show and tell**: nobody records their screen. Each of us records
+**only our voice**, one short audio file per beat (a beat is one or two sentences).
+Husain builds every frame from the real sources (slides, Verilog, terminal output,
+waveforms) and times each frame to its beat's audio. Final length is about 4:40.
 
 ## Who records what
 
-| Clip file | Who | On screen | Target |
-|---|---|---|---|
-| `01_navodit_intro.mp4` | Navodit | Slides 1 to 3 | 0:50 |
-| `02_aryan_single_cycle.mp4` | Aryan | Slide 4 | 0:15 |
-| `03_sarvesh_pipeline.mp4` | Sarvesh | Slides 5, 6, then the editor | 0:55 |
-| `04_trishit_demo.mp4` | Trishit | Terminal and Surfer, then slides 7, 8 | 1:20 |
-| `05_husain_results.mp4` | Husain | Slides 9 to 11 | 0:50 |
-| `06_navodit_conclusion.mp4` | Navodit | Slide 12 | 0:25 |
+| Beats | Who | What the viewer sees |
+|---|---|---|
+| `01_01` to `01_06` | Navodit | Slides 1 to 3 |
+| `02_01` to `02_02` | Aryan | Slide 4 |
+| `03_01` to `03_10` | Sarvesh | Slide 5 with a zoom, slide 6 one card at a time, then the Verilog with each line highlighted |
+| `04_01` to `04_10` | Trishit | Terminal output, three waveforms, slides 7 and 8 |
+| `05_01` to `05_06` | Husain | Slides 9 to 11 |
+| `06_01` to `06_02` | Navodit | Slide 12 |
 
-Your script: [Navodit](navodit.md), [Aryan](aryan.md), [Sarvesh](sarvesh.md),
-[Trishit](trishit.md), [Husain](husain.md). The lines match the speaker notes in
-`slides/phase1-slides.pptx`, so slides and voice agree.
-
-## Setup, the same for everyone
-
-1. `git pull` on `main` so you have the final deck.
-2. **Slides:** open `slides/phase1-slides.pdf` in full screen (Mac Preview: View, Slideshow;
-   Windows: Edge or Acrobat, full screen). Use the PDF, not the pptx, so every clip looks the same.
-3. **Recorder:** screen plus microphone, no camera.
-   - Mac: `Cmd + Shift + 5`, choose Record Entire Screen, Options, pick your microphone.
-   - Windows: OBS Studio (free), or Clipchamp screen recording.
-   - Any tool is fine if the output is a video file of the full screen with your voice.
-4. **Screen:** 1920x1080 or higher. Close notifications (Mac: Focus, Do Not Disturb; Windows: Focus assist).
-   Hide the dock or taskbar if you can.
-5. **Sound:** quiet room, earphones with a mic beat a laptop mic. Fan off. Do a 10 second test and listen back.
+Your lines: [Navodit](navodit.md), [Aryan](aryan.md), [Sarvesh](sarvesh.md),
+[Trishit](trishit.md), [Husain](husain.md). Every line is also in [`shots.tsv`](shots.tsv),
+which is what the build reads.
 
 ## How to record
 
-- **Two seconds of silence** at the start and at the end of the clip. Husain trims them.
-- **One clip per file in the table.** Navodit records two clips.
-- **Read your script as written.** The numbers are checked against `results/`. Do not round them or add new ones.
-- **Change slides on the line marked `[NEXT]`**, then keep talking. Do not pause on a slide change.
-- **Stumbled?** Do not stop the recording. Stay silent for 3 seconds, then repeat the whole sentence.
-  The silence tells Husain where to cut. Use this for up to three mistakes; past that, restart the clip.
-- **Pace:** steady, a bit slower than talking to a friend. Time yourself once before you record.
-  If you are more than 5 seconds over your target, speak a little faster, but do not cut words.
+1. **App:** your phone's voice recorder (iPhone Voice Memos, Android Recorder) is enough.
+2. **Room:** quiet, soft furnishings help, fan off. Hold the phone about a hand's width from your mouth, a little to the side.
+3. **One file per beat.** Read the beat, stop, listen back. Not clean? Delete and record it again.
+   Short files make retakes cheap, so aim for clean, not perfect.
+4. **Name each file by its beat id**, for example `03_07.m4a`. Keep the app's extension.
+5. **Read the line as written.** The numbers are checked against `results/`. Do not round them or add new ones.
+6. **Tone:** like explaining to a friend in the lab. Steady pace, small smile, end each beat with a falling tone, as if it is the end of a sentence.
+7. Silence at the start or end of a file is fine. The build trims it.
 
-## Sending your clip
+## Sending
 
-1. Name the file exactly as in the table (keep your recorder's extension, `.mov` is fine).
-2. Send it to Husain as a **file**, not as a video message. WhatsApp: attach as Document.
-   Google Drive or a direct upload also works. Chat apps shrink videos sent as media.
-3. Say "sent" in the group with the clip length.
-
-Deadline: send your clip by the time the group agrees, early enough for Husain to edit and
-for one reshoot if something is wrong.
+Put all your files in one folder named after you, zip it, and send it to Husain as a
+**file** (WhatsApp: attach as Document; Google Drive works too). Say "sent" in the group.

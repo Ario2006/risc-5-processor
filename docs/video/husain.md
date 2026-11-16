@@ -1,33 +1,20 @@
-<!-- ABOUTME: Husain's recording script for the Phase I video: the synthesis, CPI and speedup slides. -->
-<!-- ABOUTME: Husain also edits the video; the editing steps for his Claude are in editing.md. -->
-# Husain: `05_husain_results.mp4`, about 50 seconds
+<!-- ABOUTME: Husain's voice lines for the Phase I video: synthesis, CPI and speedup. -->
+<!-- ABOUTME: Husain also builds the video; the steps for his Claude are in editing.md. -->
+# Husain: 6 beats
 
-Read [`README.md`](README.md) for setup first. You also edit the final video:
-hand [`editing.md`](editing.md) to your Claude once all six clips are in.
+Read [`README.md`](README.md) first. One audio file per beat, named by its id.
+You also build the video: hand [`editing.md`](editing.md) to your Claude once all 36 files are in.
 
-## Script
-
-Start on slide 9, in full screen. Two seconds of silence, then:
-
-> Post-route on a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 MHz.
-> Forwarding brings it back to 83.89, because its compare and mux sit in front of the
-> branch decision.
-
-`[NEXT]` to slide 10.
-
-> Without forwarding, data stalls dominate. Forwarding removes them, leaving load-use
-> stalls and the branch penalty, which adds a quarter to a third of a cycle per
-> instruction in every benchmark.
-
-`[NEXT]` to slide 11.
-
-> So the speedup is only 0.71 to 1.29 times, not five. The critical path is still half
-> to two-thirds of the single-cycle path, and every loop iteration pays two cycles for its branch.
-
-Two seconds of silence, stop.
+| File | On screen | Say |
+|---|---|---|
+| `05_01` | Slide 9 | Post-route on a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 megahertz. |
+| `05_02` | Slide 9, slow zoom | Forwarding brings it back to 83.89, because its compare and mux sit in front of the branch decision. |
+| `05_03` | Slide 10 | Without forwarding, data stalls dominate. Forwarding removes them. |
+| `05_04` | Slide 10, slow zoom | What is left is load-use stalls and the branch penalty, which adds a quarter to a third of a cycle per instruction in every benchmark. |
+| `05_05` | Slide 11 | So the speedup is only 0.71 to 1.29 times, not five. |
+| `05_06` | Slide 11, slow zoom | The critical path is still half to two-thirds of the single-cycle path, and every loop iteration pays two cycles for its branch. |
 
 ## Say it right
 
-- "113.86" is "one thirteen point eight six". "83.89" is "eighty three point eight nine".
-- "0.71 to 1.29 times" is "zero point seven one to one point two nine times".
-- "ECP5" is "E C P five".
+"113.86" is "one thirteen point eight six". "83.89" is "eighty three point eight nine".
+"0.71 to 1.29 times" is "zero point seven one to one point two nine times". "ECP5" is "E C P five".
