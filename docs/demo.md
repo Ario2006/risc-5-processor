@@ -1,6 +1,6 @@
 # Demo and slides script
 
-About 4 minutes of slides, then a 1 minute live demo (5 minutes in all, for the Phase I video). Every figure is in `figures/`.
+The Phase I video is under 5 minutes: slides, a short Verilog walk and a live demo, timed below. The full script is in the deck's speaker notes. Every figure is in `figures/`.
 
 ## Slides (Navodit builds, each person presents their part)
 
@@ -17,7 +17,17 @@ About 4 minutes of slides, then a 1 minute live demo (5 minutes in all, for the 
 11. Speedup and why it is not 5x: `figures/speedup.png` (Husain)
 12. Conclusion and Phase II plan (Navodit)
 
-The exported deck is `slides/phase1-slides.pdf`.
+The exported deck is `slides/phase1-slides.pdf` and the editable source is `slides/phase1-slides.pptx`.
+
+## Run of show (about 4:35)
+
+| Time | On screen | Who |
+|---|---|---|
+| 0:00 to 1:35 | Slides 1 to 6 | Navodit, Aryan, Sarvesh |
+| 1:35 to 2:00 | Verilog: `rtl/pipeline/hazard_unit.v` lines 39 to 44, `forwarding_unit.v` lines 25 to 28 | Sarvesh |
+| 2:00 to 2:50 | Live demo below | Trishit |
+| 2:50 to 4:10 | Slides 7 to 11 | Trishit, Husain |
+| 4:10 to 4:35 | Slide 12 | Navodit |
 
 ## Live demo
 
