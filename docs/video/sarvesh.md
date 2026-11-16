@@ -1,22 +1,23 @@
-<!-- ABOUTME: Sarvesh's voice lines for the Phase I video: pipeline, hazards and the Verilog walk. -->
-<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
-# Sarvesh: 10 beats
+<!-- ABOUTME: Sarvesh's lines for the Phase I video: pipeline, hazards and the Verilog walk. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
+# Sarvesh: one take
 
-Read [`README.md`](README.md) first. One audio file per beat, named by its id.
+Read [`README.md`](README.md) first. Record your whole segment as **one take**, face on camera,
+saying the lines below in order, with a short pause between them. Upload it as `sarvesh.mov`.
 
-| File | On screen | Say |
-|---|---|---|
-| `03_01` | Slide 5, slow push in | We cut the same datapath into five stages, with a pipeline register between each pair, and one Verilog module each. |
-| `03_02` | Zoomed on the datapath diagram | Green lines are the forwarding paths. Red is the branch flush. |
-| `03_03` | Slide 6, Structural card lit | Structural hazards cost nothing. |
-| `03_04` | Slide 6, Data card lit | With forwarding, only a load that is used at once stalls, and only for one cycle. |
-| `03_05` | Slide 6, Control card lit | A taken branch flushes two instructions. |
-| `03_06` | `hazard_unit.v`, lines 35 to 45 | Here is how that looks in the Verilog, in the hazard unit. |
-| `03_07` | Line 39 highlighted | Line 39. Load use is a load in EX, writing a register that the instruction in ID reads. |
-| `03_08` | Line 43 highlighted | Line 43. Flush is just a taken branch in EX. |
-| `03_09` | Line 44 highlighted | Line 44. With forwarding, we stall only on load use. Without it, whenever a result it needs is still in EX or MEM. |
-| `03_10` | `forwarding_unit.v`, lines 25 to 28 highlighted | In the forwarding unit, lines 25 to 28 check EX MEM before MEM WB, so the newest value wins. |
+| Behind you | Say |
+|---|---|
+| Slide 5, slow push in | To pipeline it, we cut that datapath into five stages, with registers in between, so five instructions are in flight at once. |
+| Zoomed on the datapath diagram | The catch is they depend on each other. The green wires pass results back early. The red one throws away wrong work after a branch. |
+| Slide 6, Structural card lit | Structural hazards, two instructions fighting over hardware, we designed out completely. |
+| Slide 6, Data card lit | Forwarding fixes almost every data hazard. The exception is a load whose result is used straight away. That costs one cycle. |
+| Slide 6, Control card lit | And by the time a branch is taken, two wrong instructions have started, so we flush them. |
+| `hazard_unit.v`, lines 35 to 45 | All of this lives in one small module, the hazard unit. |
+| Line 39 highlighted | This line spots the load case: a load, and the next instruction needs its result. |
+| Line 43 highlighted | This one is the flush. Just a taken branch. |
+| Line 44 highlighted | And this is the stall. With forwarding, only the load case. Without it, any result still on its way. |
+| `forwarding_unit.v`, lines 25 to 28 highlighted | Forwarding checks the newest result first, so you always get the latest value. |
 
 ## Say it right
 
-"EX" is "E X", "ID" is "I D", "MEM WB" is "MEM W B".
+Speak it like you are explaining it to a friend. The highlight on screen shows which line you mean, so you never read out line numbers.

@@ -1,13 +1,15 @@
-<!-- ABOUTME: Aryan's voice lines for the Phase I video: the single-cycle slide. -->
-<!-- ABOUTME: Read docs/video/README.md first for how to record and send files. -->
-# Aryan: 2 beats
+<!-- ABOUTME: Aryan's lines for the Phase I video: the single-cycle slide. -->
+<!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
+# Aryan: one take
 
-Read [`README.md`](README.md) first. One audio file per beat, named by its id.
+Read [`README.md`](README.md) first. Record your whole segment as **one take**, face on camera,
+saying the lines below in order, with a short pause between them. Upload it as `aryan.mov`.
+You also edit the video: follow [`editing.md`](editing.md) once all five takes are in.
 
-| File | On screen | Say |
-|---|---|---|
-| `02_01` | Slide 4 | The single-cycle datapath runs all 18 instructions in one cycle, so the clock must fit the slowest, a load. |
-| `02_02` | Slide 4, slow zoom | Register read, ALU, memory and write back, in series. That is 17 nanoseconds, 58.75 megahertz. |
+| Behind you | Say |
+|---|---|
+| Slide 4 | Here's our starting point. In the single cycle CPU, every instruction finishes in one cycle, so the clock must wait for the slowest one, a load. |
+| Slide 4, slow zoom | A load reads registers, uses the ALU, reads memory and writes back, all at once. That's 17 nanoseconds, or 58.75 megahertz. |
 
 ## Say it right
 
