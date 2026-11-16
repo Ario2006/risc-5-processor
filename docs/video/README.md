@@ -30,7 +30,7 @@ Your lines: [Navodit](navodit.md), [Aryan](aryan.md), [Sarvesh](sarvesh.md),
 2. **Room:** quiet, with the fan and AC off.
 3. **One take for your segment.** Say your lines in order without stopping the recording.
 4. **Pause briefly between lines.** About 2 seconds. That is where the edit switches the frame, and the pause gets trimmed.
-5. **Stumbled?** Pause, then say the whole line again from the start. Keep recording. The edit keeps the last clean attempt.
+5. **Stumbled?** Pause about 2 seconds, then say the whole line again from the start. Keep recording. The edit keeps the last clean attempt.
 6. **Say the line as written.** The numbers are checked against `results/`. Do not round them or add new ones.
 7. **Tone:** like explaining it to a friend. Steady pace, and end each line as if it is the end of a sentence.
 

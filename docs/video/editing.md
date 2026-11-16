@@ -33,9 +33,11 @@ puts the matching frame full screen under each line.
 4. If a take has a repeated line or a false start, it won't split into the right number of
    lines. The script prints the speech segments it found and writes `takes/cuts.detected.tsv`.
    Put the clean attempt of **every** line of that speaker in `takes/cuts.tsv`, one line each:
-   `id start end`, times in seconds. Then run it again.
+   `id start end`, times in seconds. Then run it again. The ids in `cuts.detected.tsv` are
+   guesses by position, so after an extra segment they are off by one.
 5. Read every `check <id>` warning. It means that line's length doesn't fit its word count,
-   usually a false start that stayed in or two lines cut as one. Fix it in `cuts.tsv`.
+   usually two lines cut as one or a long false start. Fix it in `cuts.tsv`. A short false
+   start after a short pause can slip through without a warning; the watch-through catches it.
 
 The script shortens the pauses between lines to about half a second and normalizes the whole
 video to -16 LUFS.
