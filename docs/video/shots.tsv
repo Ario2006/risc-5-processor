@@ -1,6 +1,6 @@
 id	image	motion	line
 01_01	slide_01.png	still	Hi, we're team Processors Assemble: Sarvesh, Aryan, Trishit, Husain and me, Navodit.
-01_02	slide_01.png	push	We built a RISC-V processor in Verilog, first single-cycle, then a five-stage pipeline, and measured what pipelining really buys on an FPGA.
+01_02	slide_01.png	push	We built a RISC-V processor in Verilog, first single-cycle, then a five-stage pipeline, and measured what pipelining really buys in post-route FPGA timing.
 01_03	slide_02.png	still	A five-stage pipeline is ideally five times faster. To test that, we built three CPUs for the same 18-instruction subset.
 01_04	slide_02.png	push	Single-cycle, a pipeline without forwarding, and one with forwarding. Same tests, same FPGA target.
 01_05	slide_03.png	still	Every result follows the iron law: time is instructions times CPI over clock.
@@ -15,7 +15,7 @@ id	image	motion	line
 03_06	code_hazard.png	still	Here is how that looks in the Verilog, in the hazard unit.
 03_07	code_hazard_39.png	still	Line 39. Load use is a load in EX, writing a register that the instruction in ID reads.
 03_08	code_hazard_43.png	still	Line 43. Flush is just a taken branch in EX.
-03_09	code_hazard_44.png	still	Line 44. With forwarding, we stall only on load use. Without it, on any result still in EX or MEM.
+03_09	code_hazard_44.png	still	Line 44. With forwarding, we stall only on load use. Without it, whenever a result it needs is still in EX or MEM.
 03_10	code_fwd_25_28.png	still	In the forwarding unit, lines 25 to 28 check EX MEM before MEM WB, so the newest value wins.
 04_01	term_test.png	still	Now the demo. make test runs every program on all three CPUs, and checks each one against our Python reference simulator.
 04_02	term_test.png	push	248 passed, in under three seconds.
@@ -23,15 +23,15 @@ id	image	motion	line
 04_04	wave_forward.png	still	At EX PC hex four, forward A and forward B both switch to 2. The add takes x1 straight from EX MEM.
 04_05	wave_load_use.png	still	Next, stall goes high for one cycle. The add right after the load waits for its value.
 04_06	wave_branch_flush.png	still	Then flush goes high. The branch is taken in EX, so the two instructions behind it become bubbles.
-04_07	slide_07.png	still	The same demo as pipeline diagrams from the hardware trace: 14 cycles with forwarding, 19 without.
+04_07	slide_07.png	still	The same demo as pipeline diagrams from the simulation trace: 14 cycles with forwarding, 19 without.
 04_08	slide_07.png	push	Without forwarding, a result still in EX or MEM cannot be used yet.
 04_09	slide_08.png	still	Every program runs on all three CPUs and must match our Python reference simulator: every register, every data word, the instruction count.
 04_10	slide_08.png	push	248 automated checks, all passing.
-05_01	slide_09.png	still	Post-route on a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 megahertz.
+05_01	slide_09.png	still	In post-route estimates for a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 megahertz.
 05_02	slide_09.png	push	Forwarding brings it back to 83.89, because its compare and mux sit in front of the branch decision.
-05_03	slide_10.png	still	Without forwarding, data stalls dominate. Forwarding removes them.
-05_04	slide_10.png	push	What is left is load-use stalls and the branch penalty, which adds a quarter to a third of a cycle per instruction in every benchmark.
+05_03	slide_10.png	still	Without forwarding, data stalls are the biggest loss. Forwarding removes them.
+05_04	slide_10.png	push	What is left is load-use stalls and the branch penalty, which adds 0.23 to 0.35 cycles per instruction across the benchmarks.
 05_05	slide_11.png	still	So the speedup is only 0.71 to 1.29 times, not five.
-05_06	slide_11.png	push	The critical path is still half to two-thirds of the single-cycle path, and every loop iteration pays two cycles for its branch.
+05_06	slide_11.png	push	The critical path is still 52 percent of the single-cycle path without forwarding and 70 percent with it, and every loop iteration pays two cycles for its branch.
 06_01	slide_12.png	still	A pipeline wins only when the clock it gains beats the CPI it loses.
 06_02	slide_12.png	push,end	Phase II attacks the two losses we measured, branches and the long critical path, then extends the instruction set and runs on a real board. Thank you.

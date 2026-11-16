@@ -10,6 +10,7 @@ import fitz
 from PIL import Image, ImageDraw, ImageFont
 from pygments import highlight
 from pygments.formatters import ImageFormatter
+from pygments.formatters.img import FontNotFound
 from pygments.lexers import VerilogLexer
 
 W, H = 1920, 1080
@@ -76,8 +77,10 @@ def code_card(repo, path, first, last, hl, presenter, dst):
                                  hl_color="#FBE3C8", image_pad=24)
             code = Image.open(BytesIO(highlight("\n".join(lines), VerilogLexer(), fmt))).convert("RGB")
             break
-        except Exception:
+        except FontNotFound:
             continue
+    else:
+        sys.exit(f"No monospace font found for the code cards; tried {MONO_NAMES}")
     canvas = frame("THE VERILOG", path, presenter, title_mono=True)
     paste_fit(canvas, code, (128, 250, 1664, 700))
     canvas.save(dst)
@@ -107,7 +110,7 @@ def figure_card(src, eyebrow, title, presenter, dst):
 
 
 def run(cmd, repo):
-    done = subprocess.run(cmd, cwd=repo, capture_output=True, text=True)
+    done = subprocess.run(cmd, check=False, cwd=repo, capture_output=True, text=True)
     lines = [l for l in (done.stdout + done.stderr).splitlines() if l.strip()]
     return lines
 

@@ -7,12 +7,12 @@ You also build the video: hand [`editing.md`](editing.md) to your Claude once al
 
 | File | On screen | Say |
 |---|---|---|
-| `05_01` | Slide 9 | Post-route on a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 megahertz. |
+| `05_01` | Slide 9 | In post-route estimates for a Lattice ECP5, pipelining raises the clock from 58.75 to 113.86 megahertz. |
 | `05_02` | Slide 9, slow zoom | Forwarding brings it back to 83.89, because its compare and mux sit in front of the branch decision. |
-| `05_03` | Slide 10 | Without forwarding, data stalls dominate. Forwarding removes them. |
-| `05_04` | Slide 10, slow zoom | What is left is load-use stalls and the branch penalty, which adds a quarter to a third of a cycle per instruction in every benchmark. |
+| `05_03` | Slide 10 | Without forwarding, data stalls are the biggest loss. Forwarding removes them. |
+| `05_04` | Slide 10, slow zoom | What is left is load-use stalls and the branch penalty, which adds 0.23 to 0.35 cycles per instruction across the benchmarks. |
 | `05_05` | Slide 11 | So the speedup is only 0.71 to 1.29 times, not five. |
-| `05_06` | Slide 11, slow zoom | The critical path is still half to two-thirds of the single-cycle path, and every loop iteration pays two cycles for its branch. |
+| `05_06` | Slide 11, slow zoom | The critical path is still 52 percent of the single-cycle path without forwarding and 70 percent with it, and every loop iteration pays two cycles for its branch. |
 
 ## Say it right
 

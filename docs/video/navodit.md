@@ -9,7 +9,7 @@ Read [`README.md`](README.md) first. One audio file per beat, named by its id.
 | File | On screen | Say |
 |---|---|---|
 | `01_01` | Slide 1 | Hi, we're team Processors Assemble: Sarvesh, Aryan, Trishit, Husain and me, Navodit. |
-| `01_02` | Slide 1, slow zoom | We built a RISC-V processor in Verilog, first single-cycle, then a five-stage pipeline, and measured what pipelining really buys on an FPGA. |
+| `01_02` | Slide 1, slow zoom | We built a RISC-V processor in Verilog, first single-cycle, then a five-stage pipeline, and measured what pipelining really buys in post-route FPGA timing. |
 | `01_03` | Slide 2 | A five-stage pipeline is ideally five times faster. To test that, we built three CPUs for the same 18-instruction subset. |
 | `01_04` | Slide 2, slow zoom | Single-cycle, a pipeline without forwarding, and one with forwarding. Same tests, same FPGA target. |
 | `01_05` | Slide 3 | Every result follows the iron law: time is instructions times CPI over clock. |
