@@ -30,11 +30,11 @@ load-use) and without (stalls on every read-after-write hazard).
 The single-cycle CPU and both pipeline configurations are implemented and checked
 against the reference ISS with 248 automated tests. Synthesis and benchmark results,
 annotated hazard waveforms and the [project report (PDF)](report/main.pdf) are available.
-The Phase I video is pending upload in [issue #11](https://github.com/Ario2006/risc-5-processor/issues/11).
+Watch the Phase I video: [`docs/video/phase1-video.mp4`](docs/video/phase1-video.mp4).
 
 ## Phase I Demo Video
 
-Awaiting the video URL from [issue #11](https://github.com/Ario2006/risc-5-processor/issues/11).
+[`docs/video/phase1-video.mp4`](docs/video/phase1-video.mp4), under 5 minutes.
 The [demo script](docs/demo.md) is available in the meantime.
 
 ## Results
