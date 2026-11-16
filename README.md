@@ -2,7 +2,7 @@
 
 **Team: Processors Assemble!**
 
-**Section:** awaiting confirmation.
+**Section:** E
 
 Modern Computer Architecture, Verilog Project 3 — NST, Rishihood University.
 
