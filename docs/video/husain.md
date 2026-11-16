@@ -2,17 +2,18 @@
 <!-- ABOUTME: Read docs/video/README.md first for how to record and send your take. -->
 # Husain: one take
 
-Read [`README.md`](README.md) first. Record your whole segment as **one take**, face on camera,
-saying the lines below in order, with a short pause between them. Upload it as `husain.mov`.
+Read [`README.md`](README.md) first. Record your whole segment as **one take**, voice
+only, no camera, saying the lines below in order, with a short pause between them. Upload it
+named `husain`, in any audio or video format.
 
-| Behind you | Say |
+| On screen | Say |
 |---|---|
 | Slide 9 | So, is it faster? After place and route on a Lattice ECP5, pipelining nearly doubles the clock, from 58.75 to 113.86 megahertz. |
-| Slide 9, slow zoom | Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision. |
+| Slide 9 | Forwarding pulls it back to 83.89, because its extra logic sits right before the branch decision. |
 | Slide 10 | Without forwarding, the biggest loss is waiting on data. Forwarding removes that. |
-| Slide 10, slow zoom | What's left is the load stall and branches, adding 0.23 to 0.35 cycles per instruction. |
+| Slide 10 | What's left is the load stall and branches, adding 0.23 to 0.35 cycles per instruction. |
 | Slide 11 | So the pipeline is only 0.71 to 1.29 times as fast. Nowhere near five. |
-| Slide 11, slow zoom | The slowest path is still 52 percent of the single cycle one without forwarding, 70 percent with it. And every loop pays two cycles for its branch. |
+| Slide 11 | The slowest path is still 52 percent of the single cycle one without forwarding, 70 percent with it. And every loop pays two cycles for its branch. |
 
 ## Say it right
 
