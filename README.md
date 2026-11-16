@@ -1,11 +1,41 @@
 # 5-Stage Pipelined RISC-V Processor
 
-Modern Computer Architecture, Verilog project 3. Team: Sarvesh, Husain, Navodit, Aryan, Trishit.
+**Team: Processors Assemble!**
+
+**Section:** E
+
+Modern Computer Architecture, Verilog Project 3 — NST, Rishihood University.
 
 We build a single-cycle RV32I subset CPU, split it into a five-stage pipeline
 (IF, ID, EX, MEM, WB), and measure what pipelining does to CPI, clock frequency and
 execution time. The pipeline runs in two modes: with forwarding (stalls only on
 load-use) and without (stalls on every read-after-write hazard).
+
+## Team members
+
+| Name | Enrolment number | GitHub | Role |
+|---|---|---|---|
+| Sarvesh Srinath | 2401010423 | [@sarveshcore](https://github.com/sarveshcore) | CPU RTL, pipeline and hazard units, assembler, reference model and tooling |
+| Trishit Swarnakar | 2401010480 | [@Trishix](https://github.com/Trishix) | Verification, directed tests and annotated waveforms |
+| Aryan Kumar | 2401020014 | [@Ario2006](https://github.com/Ario2006) | Single-cycle datapath and control review |
+| Husain Khorakiwala | 2401010192 | [@AvgBlank](https://github.com/AvgBlank) | Synthesis and performance analysis, review, final report and submission |
+| Navodit Sharma | 2401010294 | [@Navodit-AI](https://github.com/Navodit-AI) | Background and related work, report assembly, slides and demo video |
+
+## Architecture
+
+![Five-stage RISC-V pipeline with IF, ID, EX, MEM and WB stages, hazard detection and forwarding](figures/architecture_pipeline.png)
+
+## Status
+
+The single-cycle CPU and both pipeline configurations are implemented and checked
+against the reference ISS with 248 automated tests. Synthesis and benchmark results,
+annotated hazard waveforms and the [project report (PDF)](report/main.pdf) are available.
+Watch the Phase I video: [`docs/video/phase1-video.mp4`](docs/video/phase1-video.mp4).
+
+## Phase I Demo Video
+
+[`docs/video/phase1-video.mp4`](docs/video/phase1-video.mp4), under 5 minutes.
+The [demo script](docs/demo.md) is available in the meantime.
 
 ## Results
 
@@ -77,6 +107,15 @@ RV32I subset, 32 bit, little endian, word sized memory access only.
 
 The assembler also accepts `nop li la mv j beqz bnez halt` and a `.data` section with
 `.word`. Instruction and data memories are separate (Harvard), 256 words each.
+
+Assembly sources (`.s`) are in `programs/`; `tools/rvasm.py` generates the instruction
+and data `.hex` files at run time. To generate both files for the hazard demo:
+
+```sh
+uv run python -m tools.rvasm programs/tests/hazard_demo.s
+```
+
+This writes `build/hazard_demo.imem.hex` and `build/hazard_demo.dmem.hex`.
 
 ## Layout
 
